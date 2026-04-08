@@ -1,5 +1,7 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { UpdateRuleSchema } from '@/lib/schemas/rule.schema';
 import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
 
 export const ruleService = {
@@ -41,12 +43,12 @@ export const ruleService = {
     orgId: string,
     projectSlug: string,
     filters?: { scope?: string; isActive?: boolean; search?: string; limit?: number; offset?: number },
-  ): Promise<PaginatedResult<any> | null> {
+  ) {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
-    const where: any = { projectId: project.id };
-    if (filters?.scope) where.scope = filters.scope as 'GLOBAL';
+    const where: Prisma.RuleWhereInput = { projectId: project.id };
+    if (filters?.scope) where.scope = filters.scope as Prisma.EnumRuleScopeFilter;
     if (filters?.isActive !== undefined) where.isActive = filters.isActive;
     if (filters?.search) {
       where.OR = [
@@ -78,9 +80,14 @@ export const ruleService = {
     const existing = await prisma.rule.findFirst({ where: { id: ruleId, projectId: project.id } });
     if (!existing) return null;
 
+    const validated = UpdateRuleSchema.parse(data);
+
     const rule = await prisma.rule.update({
       where: { id: ruleId },
-      data: data as Parameters<typeof prisma.rule.update>[0]['data'],
+      data: {
+        ...validated,
+        metadata: toJsonInput(validated.metadata),
+      },
     });
 
     await logActivity(auth, project.id, 'rule.updated', 'rule', rule.id, `Updated rule "${rule.title}"`);

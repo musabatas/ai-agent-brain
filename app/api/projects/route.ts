@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { CreateProjectSchema } from '@/lib/schemas/project.schema';
 import { projectService } from '@/lib/services/project.service';
 
@@ -13,8 +14,8 @@ export async function GET(req: NextRequest) {
     const status = new URL(req.url).searchParams.get('status') ?? undefined;
     const projects = await projectService.list(auth.orgId, status);
     return NextResponse.json({ data: projects });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const project = await projectService.create(auth, parsed.data);
     return NextResponse.json({ data: project }, { status: 201 });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }

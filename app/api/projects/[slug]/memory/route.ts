@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { UpsertMemorySchema } from '@/lib/schemas/memory.schema';
 import { memoryService } from '@/lib/services/memory.service';
 

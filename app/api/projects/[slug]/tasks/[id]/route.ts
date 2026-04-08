@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { UpdateTaskSchema } from '@/lib/schemas/task.schema';
 import { taskService } from '@/lib/services/task.service';
 

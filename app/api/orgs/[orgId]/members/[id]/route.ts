@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { UpdateOrgMemberSchema } from '@/lib/schemas/org.schema';
 import { orgService } from '@/lib/services/org.service';
 
@@ -47,11 +48,8 @@ export async function PATCH(
     }
 
     return NextResponse.json({ data: result });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -92,10 +90,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'Member removed' });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

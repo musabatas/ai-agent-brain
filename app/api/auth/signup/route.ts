@@ -1,7 +1,9 @@
 // pages/api/auth/signup.ts
+import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
+import { rateLimit } from '@/lib/rate-limit';
 import { verifyRecaptchaToken } from '@/lib/recaptcha';
 import { sendEmail } from '@/services/send-email';
 import {
@@ -16,7 +18,7 @@ async function sendVerificationEmail(user: User) {
   const token = await prisma.verificationToken.create({
     data: {
       identifier: user.id,
-      token: bcrypt.hashSync(user.id, 10),
+      token: crypto.randomBytes(32).toString('hex'),
       expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour from now
     },
   });
@@ -41,6 +43,9 @@ async function sendVerificationEmail(user: User) {
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, { key: 'signup', limit: 5, windowMs: 15 * 60 * 1000 });
+  if (limited) return limited;
+
   try {
     // Skip reCAPTCHA in development
     if (process.env.NODE_ENV !== 'development') {

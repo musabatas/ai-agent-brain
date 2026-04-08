@@ -18,7 +18,6 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 import '@/css/styles.css';
-import '@/components/keenicons/assets/styles.css';
 
 export const metadata: Metadata = {
   title: {

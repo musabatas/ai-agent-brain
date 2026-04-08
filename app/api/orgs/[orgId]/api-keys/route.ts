@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { CreateApiKeySchema } from '@/lib/schemas/api-key.schema';
 import { apiKeyService } from '@/lib/services/api-key.service';
 import { orgService } from '@/lib/services/org.service';
@@ -28,11 +29,8 @@ export async function GET(
 
     const keys = await apiKeyService.list(orgId);
     return NextResponse.json({ data: keys });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -72,10 +70,7 @@ export async function POST(
       parsed.data,
     );
     return NextResponse.json({ data: result }, { status: 201 });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

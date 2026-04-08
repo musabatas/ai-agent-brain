@@ -84,7 +84,7 @@ export const orgService = {
     const existing = await prisma.orgMember.findUnique({
       where: { orgId_userId: { orgId, userId: user.id } },
     });
-    if (existing) return { alreadyMember: true };
+    if (existing) return { alreadyMember: true as const };
 
     return prisma.orgMember.create({
       data: { orgId, userId: user.id, role },

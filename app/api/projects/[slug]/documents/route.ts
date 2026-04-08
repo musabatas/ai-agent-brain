@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { CreateDocumentSchema } from '@/lib/schemas/document.schema';
 import { documentService } from '@/lib/services/document.service';
 

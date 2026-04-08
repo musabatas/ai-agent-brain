@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { AddOrgMemberSchema } from '@/lib/schemas/org.schema';
 import { orgService } from '@/lib/services/org.service';
 
@@ -27,11 +28,8 @@ export async function GET(
 
     const org = await orgService.get(orgId);
     return NextResponse.json({ data: org?.members ?? [] });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -87,10 +85,7 @@ export async function POST(
     }
 
     return NextResponse.json({ data: result }, { status: 201 });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

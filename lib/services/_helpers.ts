@@ -19,7 +19,10 @@ export interface PaginatedResult<T> {
  * Generic paginated query — runs findMany + count in parallel.
  */
 export async function paginatedQuery<T>(
-  model: { findMany: (args: any) => Promise<T[]>; count: (args: any) => Promise<number> },
+  model: {
+    findMany: (args: { where?: object; include?: object; orderBy?: object | object[]; take?: number; skip?: number }) => Promise<T[]>;
+    count: (args: { where?: object }) => Promise<number>;
+  },
   where: object,
   options: {
     limit?: number;
@@ -28,7 +31,7 @@ export async function paginatedQuery<T>(
     include?: object;
   },
 ): Promise<PaginatedResult<T>> {
-  const limit = options.limit ?? 50;
+  const limit = Math.min(options.limit ?? 50, 200);
   const offset = options.offset ?? 0;
 
   const [data, total] = await Promise.all([

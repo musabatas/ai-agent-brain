@@ -1,5 +1,7 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { UpdateTaskSchema } from '@/lib/schemas/task.schema';
 import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
 
 export const taskService = {
@@ -60,14 +62,14 @@ export const taskService = {
       limit?: number;
       offset?: number;
     },
-  ): Promise<PaginatedResult<any> | null> {
+  ) {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
-    const where: any = { projectId: project.id };
-    if (filters?.status) where.status = filters.status as 'TODO';
+    const where: Prisma.TaskWhereInput = { projectId: project.id };
+    if (filters?.status) where.status = filters.status as Prisma.EnumTaskStatusFilter;
     if (filters?.featureId) where.featureId = filters.featureId;
-    if (filters?.priority) where.priority = filters.priority as 'P2';
+    if (filters?.priority) where.priority = filters.priority as Prisma.EnumPriorityFilter;
     if (filters?.tags?.length) where.tags = { hasSome: filters.tags };
     if (filters?.search) {
       where.OR = [
@@ -96,22 +98,21 @@ export const taskService = {
     });
     if (!task) return null;
 
-    // Resolve dependency titles (tasks this depends on)
-    const dependsOnTasks =
-      task.dependsOn.length > 0
-        ? await prisma.task.findMany({
+    // Resolve dependencies and blockers in parallel
+    const [dependsOnTasks, blocks] = await Promise.all([
+      (task.dependsOn || []).length > 0
+        ? prisma.task.findMany({
             where: { id: { in: task.dependsOn }, projectId: project.id },
             select: { id: true, title: true, status: true, priority: true },
             orderBy: { sortOrder: 'asc' },
           })
-        : [];
-
-    // Reverse lookup — tasks that depend on this one (this task blocks them)
-    const blocks = await prisma.task.findMany({
-      where: { projectId: project.id, dependsOn: { has: taskId } },
-      select: { id: true, title: true, status: true, priority: true },
-      orderBy: { sortOrder: 'asc' },
-    });
+        : Promise.resolve([]),
+      prisma.task.findMany({
+        where: { projectId: project.id, dependsOn: { has: taskId } },
+        select: { id: true, title: true, status: true, priority: true },
+        orderBy: { sortOrder: 'asc' },
+      }),
+    ]);
 
     return { ...task, dependsOnTasks, blocks };
   },
@@ -130,14 +131,18 @@ export const taskService = {
     });
     if (!existing) return null;
 
-    // Auto-set completedAt when status changes to DONE
-    if (data.status === 'DONE' && existing.status !== 'DONE') {
-      data.completedAt = new Date();
-    }
+    const validated = UpdateTaskSchema.parse(data);
 
     const task = await prisma.task.update({
       where: { id: taskId },
-      data: data as Parameters<typeof prisma.task.update>[0]['data'],
+      data: {
+        ...validated,
+        metadata: toJsonInput(validated.metadata),
+        // Auto-set completedAt when status changes to DONE
+        ...(validated.status === 'DONE' && existing.status !== 'DONE'
+          ? { completedAt: new Date() }
+          : {}),
+      },
     });
 
     await logActivity(
@@ -205,6 +210,8 @@ export const taskService = {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
     // Simple ILIKE search for now — upgraded to tsvector in Slice 11
     return prisma.task.findMany({
       where: {
@@ -217,7 +224,7 @@ export const taskService = {
       include: {
         feature: { select: { id: true, title: true } },
       },
-      take: limit,
+      take: safeLimit,
       orderBy: { updatedAt: 'desc' },
     });
   },

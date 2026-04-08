@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { UpdateDecisionSchema } from '@/lib/schemas/decision.schema';
 import { decisionService } from '@/lib/services/decision.service';
 

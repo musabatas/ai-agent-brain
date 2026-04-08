@@ -1,5 +1,7 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { UpdateFeatureSchema } from '@/lib/schemas/feature.schema';
 import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
 
 export const featureService = {
@@ -48,13 +50,13 @@ export const featureService = {
     orgId: string,
     projectSlug: string,
     filters?: { status?: string; priority?: string; search?: string; limit?: number; offset?: number },
-  ): Promise<PaginatedResult<any> | null> {
+  ) {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
-    const where: any = { projectId: project.id };
-    if (filters?.status) where.status = filters.status as 'BACKLOG';
-    if (filters?.priority) where.priority = filters.priority as 'P2';
+    const where: Prisma.FeatureWhereInput = { projectId: project.id };
+    if (filters?.status) where.status = filters.status as Prisma.EnumFeatureStatusFilter;
+    if (filters?.priority) where.priority = filters.priority as Prisma.EnumPriorityFilter;
     if (filters?.search) {
       where.OR = [
         { title: { contains: filters.search, mode: 'insensitive' } },
@@ -99,9 +101,14 @@ export const featureService = {
     });
     if (!existing) return null;
 
+    const validated = UpdateFeatureSchema.parse(data);
+
     const feature = await prisma.feature.update({
       where: { id: featureId },
-      data: data as Parameters<typeof prisma.feature.update>[0]['data'],
+      data: {
+        ...validated,
+        metadata: toJsonInput(validated.metadata),
+      },
     });
 
     await logActivity(

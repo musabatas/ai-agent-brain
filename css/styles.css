@@ -20,10 +20,7 @@
 
 /* App Components  */
 @import './components/image-input.css';
-@import './components/apexcharts.css';
-@import './components/leaflet.css';
 @import './components/rating.css';
-@import './components/image-input.css';
 @import './components/scrollable.css';
 @import './components/md-editor.css';
 

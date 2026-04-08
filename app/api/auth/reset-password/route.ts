@@ -1,10 +1,14 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { rateLimit } from '@/lib/rate-limit';
 import { verifyRecaptchaToken } from '@/lib/recaptcha';
 import { sendEmail } from '@/services/send-email';
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, { key: 'reset-pwd', limit: 5, windowMs: 15 * 60 * 1000 });
+  if (limited) return limited;
+
   try {
     const recaptchaToken = req.headers.get('x-recaptcha-token');
 

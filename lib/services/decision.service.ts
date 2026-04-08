@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { UpdateDecisionSchema } from '@/lib/schemas/decision.schema';
 import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
 
 export const decisionService = {
@@ -53,12 +54,12 @@ export const decisionService = {
     orgId: string,
     projectSlug: string,
     filters?: { status?: string; tags?: string[]; search?: string; limit?: number; offset?: number },
-  ): Promise<PaginatedResult<any> | null> {
+  ) {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
-    const where: any = { projectId: project.id };
-    if (filters?.status) where.status = filters.status as 'PROPOSED';
+    const where: Prisma.DecisionWhereInput = { projectId: project.id };
+    if (filters?.status) where.status = filters.status as Prisma.EnumDecisionStatusFilter;
     if (filters?.tags?.length) where.tags = { hasSome: filters.tags };
     if (filters?.search) {
       where.OR = [
@@ -98,9 +99,17 @@ export const decisionService = {
     });
     if (!existing) return null;
 
+    const validated = UpdateDecisionSchema.parse(data);
+
     const record = await prisma.decision.update({
       where: { id: decisionId },
-      data: data as Parameters<typeof prisma.decision.update>[0]['data'],
+      data: {
+        ...validated,
+        alternatives: validated.alternatives
+          ? (validated.alternatives as unknown as Prisma.InputJsonValue)
+          : undefined,
+        metadata: toJsonInput(validated.metadata),
+      },
     });
 
     await logActivity(
@@ -161,6 +170,8 @@ export const decisionService = {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
     return prisma.decision.findMany({
       where: {
         projectId: project.id,
@@ -170,7 +181,7 @@ export const decisionService = {
           { decision: { contains: query, mode: 'insensitive' } },
         ],
       },
-      take: limit,
+      take: safeLimit,
       orderBy: { updatedAt: 'desc' },
     });
   },

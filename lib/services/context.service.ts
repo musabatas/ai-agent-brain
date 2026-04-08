@@ -12,16 +12,18 @@ export const contextService = {
 
     const [features, openTasks, decisions, rules, memory, activity] =
       await Promise.all([
-        // Active features with task counts
+        // Active features with task counts (capped at 200)
         prisma.feature.findMany({
           where: {
             projectId: project.id,
             status: { not: 'CANCELLED' },
           },
           include: {
-            tasks: { select: { status: true } },
+            _count: { select: { tasks: true } },
+            tasks: { select: { status: true }, take: 500 },
           },
           orderBy: [{ priority: 'asc' }, { sortOrder: 'asc' }],
+          take: 200,
         }),
 
         // Open tasks (not done/cancelled)
@@ -37,22 +39,24 @@ export const contextService = {
           take: 100,
         }),
 
-        // Accepted decisions
+        // Accepted decisions (capped at 100)
         prisma.decision.findMany({
           where: {
             projectId: project.id,
             status: 'ACCEPTED',
           },
           orderBy: { createdAt: 'desc' },
+          take: 100,
         }),
 
-        // Active rules
+        // Active rules (capped at 100)
         prisma.rule.findMany({
           where: {
             projectId: project.id,
             isActive: true,
           },
           orderBy: [{ enforcement: 'asc' }, { scope: 'asc' }],
+          take: 100,
         }),
 
         // Recent memory entries

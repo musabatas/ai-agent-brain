@@ -1,10 +1,14 @@
+import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
+import { rateLimit } from '@/lib/rate-limit';
 import { sendEmail } from '@/services/send-email';
 import { UserStatus } from '@/app/models/user';
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, { key: 'resend-verify', limit: 5, windowMs: 15 * 60 * 1000 });
+  if (limited) return limited;
+
   try {
     const { email } = await req.json();
 
@@ -34,7 +38,7 @@ export async function POST(req: NextRequest) {
     const token = await prisma.verificationToken.create({
       data: {
         identifier: user.id,
-        token: bcrypt.hashSync(user.id, 10),
+        token: crypto.randomBytes(32).toString('hex'),
         expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
       },
     });

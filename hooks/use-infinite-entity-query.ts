@@ -48,9 +48,9 @@ export function useInfiniteEntityQuery<T>({
       lastPage.pagination?.hasMore
         ? lastPage.pagination.offset + lastPage.pagination.limit
         : undefined,
-    staleTime: Infinity,
-    gcTime: 1000 * 60 * 60,
-    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 2,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: true,
     retry: 1,
     enabled,
   });

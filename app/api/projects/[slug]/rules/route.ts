@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { CreateRuleSchema } from '@/lib/schemas/rule.schema';
 import { ruleService } from '@/lib/services/rule.service';
 

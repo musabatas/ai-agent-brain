@@ -201,6 +201,7 @@ model OrgMember {
 
   @@unique([orgId, userId])
   @@index([userId])
+  @@index([orgId])
 }
 
 model ApiKey {

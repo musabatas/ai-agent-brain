@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { UpdateProjectSchema } from '@/lib/schemas/project.schema';
 import { projectService } from '@/lib/services/project.service';
 
@@ -20,8 +21,8 @@ export async function GET(
     }
 
     return NextResponse.json({ data: project });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -49,8 +50,8 @@ export async function PATCH(
 
     const updated = await projectService.update(auth, project.id, parsed.data);
     return NextResponse.json({ data: updated });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -72,7 +73,7 @@ export async function DELETE(
 
     const archived = await projectService.archive(auth, project.id);
     return NextResponse.json({ data: archived });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }

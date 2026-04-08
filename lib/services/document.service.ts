@@ -1,5 +1,7 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { UpdateDocumentSchema } from '@/lib/schemas/document.schema';
 import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
 
 export const documentService = {
@@ -37,12 +39,12 @@ export const documentService = {
     orgId: string,
     projectSlug: string,
     filters?: { type?: string; tags?: string[]; search?: string; limit?: number; offset?: number },
-  ): Promise<PaginatedResult<any> | null> {
+  ) {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
-    const where: any = { projectId: project.id };
-    if (filters?.type) where.type = filters.type as 'NOTE';
+    const where: Prisma.DocumentWhereInput = { projectId: project.id };
+    if (filters?.type) where.type = filters.type as Prisma.EnumDocumentTypeFilter;
     if (filters?.tags?.length) where.tags = { hasSome: filters.tags };
     if (filters?.search) {
       where.OR = [
@@ -74,9 +76,14 @@ export const documentService = {
     const existing = await prisma.document.findFirst({ where: { id: docId, projectId: project.id } });
     if (!existing) return null;
 
+    const validated = UpdateDocumentSchema.parse(data);
+
     const doc = await prisma.document.update({
       where: { id: docId },
-      data: data as Parameters<typeof prisma.document.update>[0]['data'],
+      data: {
+        ...validated,
+        metadata: toJsonInput(validated.metadata),
+      },
     });
 
     await logActivity(auth, project.id, 'document.updated', 'document', doc.id, `Updated document "${doc.title}"`);
@@ -101,6 +108,8 @@ export const documentService = {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
     return prisma.document.findMany({
       where: {
         projectId: project.id,
@@ -109,7 +118,7 @@ export const documentService = {
           { content: { contains: query, mode: 'insensitive' } },
         ],
       },
-      take: limit,
+      take: safeLimit,
       orderBy: { updatedAt: 'desc' },
     });
   },

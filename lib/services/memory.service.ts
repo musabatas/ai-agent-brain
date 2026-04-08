@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
 import { logActivity, paginatedQuery, PaginatedResult, resolveProject } from './_helpers';
@@ -57,12 +58,12 @@ export const memoryService = {
     orgId: string,
     projectSlug: string,
     filters?: { type?: string; search?: string; limit?: number; offset?: number },
-  ): Promise<PaginatedResult<any> | null> {
+  ) {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
-    const where: any = { projectId: project.id };
-    if (filters?.type) where.type = filters.type as 'PROJECT';
+    const where: Prisma.MemoryWhereInput = { projectId: project.id };
+    if (filters?.type) where.type = filters.type as Prisma.EnumMemoryTypeFilter;
     if (filters?.search) {
       where.OR = [
         { key: { contains: filters.search, mode: 'insensitive' } },
@@ -99,6 +100,8 @@ export const memoryService = {
     const project = await resolveProject(orgId, projectSlug);
     if (!project) return null;
 
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
     return prisma.memory.findMany({
       where: {
         projectId: project.id,
@@ -107,7 +110,7 @@ export const memoryService = {
           { value: { contains: query, mode: 'insensitive' } },
         ],
       },
-      take: limit,
+      take: safeLimit,
       orderBy: { updatedAt: 'desc' },
     });
   },

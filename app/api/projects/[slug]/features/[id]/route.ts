@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { UpdateFeatureSchema } from '@/lib/schemas/feature.schema';
 import { featureService } from '@/lib/services/feature.service';
 

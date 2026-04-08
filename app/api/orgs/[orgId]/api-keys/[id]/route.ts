@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
 import { apiKeyService } from '@/lib/services/api-key.service';
 import { orgService } from '@/lib/services/org.service';
 
@@ -34,10 +35,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({ message: 'API key revoked' });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
