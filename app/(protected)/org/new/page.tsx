@@ -44,7 +44,12 @@ export default function NewOrgPage() {
         const err = await res.json();
         throw new Error(err.message || 'Failed to create organization');
       }
-      return res.json();
+      const json = await res.json();
+      const newOrgId = json.data?.id;
+      if (newOrgId) {
+        document.cookie = `adb-org-id=${newOrgId}; path=/; max-age=31536000; samesite=lax${location.protocol === 'https:' ? '; secure' : ''}`;
+      }
+      return json;
     },
     onSuccess: () => {
       toast.success('Organization created!');

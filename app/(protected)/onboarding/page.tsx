@@ -70,7 +70,11 @@ export default function OnboardingPage() {
         throw new Error(err.message || 'Failed to create organization');
       }
       const json = await res.json();
-      setOrgId(json.data?.id);
+      const newOrgId = json.data?.id;
+      setOrgId(newOrgId);
+      if (newOrgId) {
+        document.cookie = `adb-org-id=${newOrgId}; path=/; max-age=31536000; samesite=lax${location.protocol === 'https:' ? '; secure' : ''}`;
+      }
       return json;
     },
     onSuccess: () => setStep(1),

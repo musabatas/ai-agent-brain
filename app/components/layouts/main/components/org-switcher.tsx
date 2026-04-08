@@ -59,7 +59,9 @@ export function OrgSwitcher() {
 
   useEffect(() => {
     if (orgs.length > 0 && !activeOrgId) {
-      storeOption('activeOrgId', orgs[0].id);
+      const id = orgs[0].id;
+      storeOption('activeOrgId', id);
+      document.cookie = `adb-org-id=${id}; path=/; max-age=31536000; samesite=lax${location.protocol === 'https:' ? '; secure' : ''}`;
     }
   }, [orgs, activeOrgId, storeOption]);
 
@@ -80,6 +82,7 @@ export function OrgSwitcher() {
 
   const handleSwitch = (orgId: string) => {
     storeOption('activeOrgId', orgId);
+    document.cookie = `adb-org-id=${orgId}; path=/; max-age=31536000; samesite=lax${location.protocol === 'https:' ? '; secure' : ''}`;
     setOpen(false);
     window.location.reload();
   };

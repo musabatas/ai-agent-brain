@@ -36,9 +36,10 @@ export async function getAuthContext(
 
   const userId = session.user.id;
 
-  // Resolve org from header, query param, or auto-detect
+  // Resolve org from header, cookie, query param, or auto-detect
   const orgId =
     req.headers.get('x-org-id') ||
+    req.cookies.get('adb-org-id')?.value ||
     new URL(req.url).searchParams.get('orgId') ||
     (await autoResolveOrg(userId));
 
