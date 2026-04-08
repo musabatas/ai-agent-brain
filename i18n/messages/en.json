@@ -1,0 +1,55 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "remove": "Remove",
+      "submit": "Submit",
+      "close": "Close"
+    },
+    "labels": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "username": "Username",
+      "phone": "Phone",
+      "address": "Address"
+    },
+    "messages": {
+      "welcome": "Welcome",
+      "loading": "Loading...",
+      "error": "An error occurred",
+      "success": "Operation completed successfully",
+      "confirm": "Are you sure?"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Welcome",
+      "description": "Welcome to our application"
+    },
+    "account": {
+      "title": "Account Settings",
+      "notifications": {
+        "title": "Notifications",
+        "description": "Manage your notification preferences"
+      }
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "messages": {
+    "unauthorized": "Unauthorized access.",
+    "system_error": "Oops! Something didn't go as planned. Please try again in a moment.",
+    "invalid_input": "Invalid input. Please check your data and try again.",
+    "data_not_found": "Requested data not found.",
+    "delete_restricted_error": "Unable to delete this record because it is linked to other records."
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "edit": "Bearbeiten",
+      "add": "Hinzufügen",
+      "remove": "Entfernen",
+      "submit": "Einreichen",
+      "close": "Schließen"
+    },
+    "labels": {
+      "name": "Name",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "username": "Benutzername",
+      "phone": "Telefon",
+      "address": "Adresse"
+    },
+    "messages": {
+      "welcome": "Willkommen",
+      "loading": "Laden...",
+      "error": "Ein Fehler ist aufgetreten",
+      "success": "Vorgang erfolgreich abgeschlossen",
+      "confirm": "Sind Sie sicher?"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Willkommen",
+      "description": "Willkommen in unserer Anwendung"
+    },
+    "account": {
+      "title": "Kontoeinstellungen",
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "description": "Verwalten Sie Ihre Benachrichtigungseinstellungen"
+      }
+    }
+  },
+  "navigation": {
+    "home": "Startseite",
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen",
+    "profile": "Profil"
+  },
+  "messages": {
+    "unauthorized": "Unbefugter Zugriff.",
+    "system_error": "Hoppla! Etwas ist nicht wie geplant gelaufen. Bitte versuchen Sie es in einem Moment erneut.",
+    "invalid_input": "Ungültige Eingabe. Bitte überprüfen Sie Ihre Daten und versuchen Sie es erneut.",
+    "data_not_found": "Angeforderte Daten nicht gefunden.",
+    "delete_restricted_error": "Dieser Datensatz kann nicht gelöscht werden, da er mit anderen Datensätzen verknüpft ist."
+  }
+}

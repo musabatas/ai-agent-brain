@@ -1,0 +1,55 @@
+{
+  "common": {
+    "buttons": {
+      "save": "保存",
+      "cancel": "取消",
+      "delete": "删除",
+      "edit": "编辑",
+      "add": "添加",
+      "remove": "移除",
+      "submit": "提交",
+      "close": "关闭"
+    },
+    "labels": {
+      "name": "姓名",
+      "email": "电子邮件",
+      "password": "密码",
+      "username": "用户名",
+      "phone": "电话",
+      "address": "地址"
+    },
+    "messages": {
+      "welcome": "欢迎",
+      "loading": "加载中...",
+      "error": "发生错误",
+      "success": "操作成功完成",
+      "confirm": "您确定吗？"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "欢迎",
+      "description": "欢迎使用我们的应用程序"
+    },
+    "account": {
+      "title": "账户设置",
+      "notifications": {
+        "title": "通知",
+        "description": "管理您的通知偏好"
+      }
+    }
+  },
+  "navigation": {
+    "home": "首页",
+    "dashboard": "仪表板",
+    "settings": "设置",
+    "profile": "个人资料"
+  },
+  "messages": {
+    "unauthorized": "未经授权的访问。",
+    "system_error": "糟糕！出了点问题，请稍后再试。",
+    "invalid_input": "输入无效。请检查您的数据并重试。",
+    "data_not_found": "未找到请求的数据。",
+    "delete_restricted_error": "无法删除此记录，因为它与其他记录有关联。"
+  }
+}

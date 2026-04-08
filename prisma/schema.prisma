@@ -1,0 +1,455 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── User Module ──
+
+enum UserStatus {
+  INACTIVE
+  ACTIVE
+  BLOCKED
+}
+
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  password        String?
+  country         String?
+  timezone        String?
+  name            String?
+  roleId          String
+  status          UserStatus   @default(INACTIVE)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  lastSignInAt    DateTime?
+  emailVerifiedAt DateTime?
+  isTrashed       Boolean      @default(false)
+  avatar          String?
+  invitedByUserId String?
+  isProtected     Boolean      @default(false)
+  role            UserRole     @relation(fields: [roleId], references: [id])
+  systemLog       SystemLog[]
+  accounts        Account[]
+  Session         Session[]
+  orgMembers      OrgMember[]
+
+  @@index([invitedByUserId])
+  @@index([roleId])
+  @@index([status])
+}
+
+model UserRole {
+  id              String               @id @default(uuid())
+  slug            String               @unique
+  name            String               @unique
+  description     String?
+  isTrashed       Boolean              @default(false)
+  createdByUserId String?
+  createdAt       DateTime             @default(now())
+  isProtected     Boolean              @default(false)
+  isDefault       Boolean              @default(false)
+  users           User[]
+  permissions     UserRolePermission[]
+}
+
+model UserPermission {
+  id              String               @id @default(uuid())
+  slug            String               @unique
+  name            String
+  description     String?
+  createdByUserId String?
+  createdAt       DateTime             @default(now())
+  roles           UserRolePermission[]
+}
+
+model UserRolePermission {
+  id           String   @id @default(uuid())
+  roleId       String
+  permissionId String
+  assignedAt   DateTime @default(now())
+
+  role       UserRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission UserPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId], name: "provider_providerAccountId")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model SystemLog {
+  id          String   @id @default(uuid())
+  userId      String
+  createdAt   DateTime @default(now())
+  entityId    String?
+  entityType  String?
+  event       String?
+  description String?
+  ipAddress   String?
+  meta        String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model SystemSetting {
+  id             String  @id @default(uuid())
+  name           String  @default("My Company")
+  logo           String?
+  active         Boolean @default(true)
+  address        String?
+  websiteURL     String?
+  supportEmail   String?
+  supportPhone   String?
+  language       String  @default("en")
+  timezone       String  @default("UTC")
+  currency       String  @default("USD")
+  currencyFormat String  @default("$ {value}")
+
+  socialFacebook  String?
+  socialTwitter   String?
+  socialInstagram String?
+  socialLinkedIn  String?
+  socialPinterest String?
+  socialYoutube   String?
+
+  notifyStockEmail               Boolean  @default(true)
+  notifyStockWeb                 Boolean  @default(true)
+  notifyStockThreshold           Int      @default(10)
+  notifyStockRoleIds             String[]
+  notifyNewOrderEmail            Boolean  @default(true)
+  notifyNewOrderWeb              Boolean  @default(true)
+  notifyNewOrderRoleIds          String[]
+  notifyOrderStatusUpdateEmail   Boolean  @default(true)
+  notifyOrderStatusUpdateWeb     Boolean  @default(true)
+  notifyOrderStatusUpdateRoleIds String[]
+  notifyPaymentFailureEmail      Boolean  @default(true)
+  notifyPaymentFailureWeb        Boolean  @default(true)
+  notifyPaymentFailureRoleIds    String[]
+  notifySystemErrorFailureEmail  Boolean  @default(true)
+  notifySystemErrorWeb           Boolean  @default(true)
+  notifySystemErrorRoleIds       String[]
+}
+
+// ── Multi-Tenancy Module ──
+
+enum OrgMemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  OrgMember[]
+  apiKeys  ApiKey[]
+  projects Project[]
+}
+
+model OrgMember {
+  id       String        @id @default(uuid())
+  orgId    String
+  userId   String
+  role     OrgMemberRole @default(MEMBER)
+  joinedAt DateTime      @default(now())
+
+  org  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([orgId, userId])
+  @@index([userId])
+}
+
+model ApiKey {
+  id          String    @id @default(uuid())
+  orgId       String
+  createdById String
+  name        String
+  keyPrefix   String
+  keyHash     String    @unique
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([keyHash])
+  @@index([orgId])
+}
+
+// ── Core Domain Module ──
+
+enum ProjectStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  orgId       String        @map("teamId")
+  name        String
+  slug        String
+  description String?
+  status      ProjectStatus @default(ACTIVE)
+  metadata    Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  org        Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  features   Feature[]
+  tasks      Task[]
+  decisions  Decision[]
+  rules      Rule[]
+  documents  Document[]
+  memories   Memory[]
+  activities Activity[]
+
+  @@unique([orgId, slug])
+  @@index([orgId])
+}
+
+enum FeatureStatus {
+  BACKLOG
+  IN_PROGRESS
+  REVIEW
+  DONE
+  CANCELLED
+}
+
+enum Priority {
+  P0
+  P1
+  P2
+  P3
+}
+
+model Feature {
+  id          String        @id @default(uuid())
+  projectId   String
+  title       String
+  description String?
+  plan        String?
+  status      FeatureStatus @default(BACKLOG)
+  priority    Priority      @default(P2)
+  sortOrder   Int           @default(0)
+  metadata    Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@index([projectId])
+  @@index([projectId, status])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  BLOCKED
+  CANCELLED
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  projectId   String
+  featureId   String?
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(P2)
+  sortOrder   Int        @default(0)
+  dependsOn   String[]   @default([])
+  tags        String[]   @default([])
+  metadata    Json?
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  feature Feature? @relation(fields: [featureId], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([projectId, status])
+  @@index([featureId])
+}
+
+enum DecisionStatus {
+  PROPOSED
+  ACCEPTED
+  DEPRECATED
+  SUPERSEDED
+}
+
+model Decision {
+  id             String         @id @default(uuid())
+  projectId      String
+  title          String
+  status         DecisionStatus @default(PROPOSED)
+  context        String
+  decision       String
+  alternatives   Json?
+  consequences   String?
+  supersededById String?
+  tags           String[]       @default([])
+  metadata       Json?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, status])
+}
+
+enum RuleScope {
+  GLOBAL
+  BACKEND
+  FRONTEND
+  DATABASE
+  API
+  TESTING
+  DEVOPS
+}
+
+enum RuleEnforcement {
+  MUST
+  SHOULD
+  MAY
+}
+
+model Rule {
+  id          String          @id @default(uuid())
+  projectId   String
+  title       String
+  content     String
+  scope       RuleScope       @default(GLOBAL)
+  enforcement RuleEnforcement @default(SHOULD)
+  isActive    Boolean         @default(true)
+  tags        String[]        @default([])
+  metadata    Json?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, isActive])
+}
+
+enum DocumentType {
+  NOTE
+  SPEC
+  GUIDE
+  RUNBOOK
+  REFERENCE
+}
+
+model Document {
+  id        String       @id @default(uuid())
+  projectId String
+  title     String
+  content   String
+  type      DocumentType @default(NOTE)
+  tags      String[]     @default([])
+  metadata  Json?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, type])
+}
+
+enum MemoryType {
+  USER
+  FEEDBACK
+  PROJECT
+  REFERENCE
+}
+
+model Memory {
+  id        String     @id @default(uuid())
+  projectId String
+  key       String
+  value     String
+  type      MemoryType @default(PROJECT)
+  tags      String[]   @default([])
+  expiresAt DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, key])
+  @@index([projectId])
+  @@index([projectId, type])
+}
+
+// ── Activity Log ──
+
+model Activity {
+  id         String   @id @default(uuid())
+  projectId  String
+  actorType  String
+  actorId    String
+  action     String
+  entityType String
+  entityId   String
+  summary    String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([projectId, createdAt])
+  @@index([entityType, entityId])
+}

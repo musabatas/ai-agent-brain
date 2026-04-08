@@ -1,0 +1,55 @@
+{
+  "common": {
+    "buttons": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "add": "Añadir",
+      "remove": "Eliminar",
+      "submit": "Enviar",
+      "close": "Cerrar"
+    },
+    "labels": {
+      "name": "Nombre",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "username": "Nombre de usuario",
+      "phone": "Teléfono",
+      "address": "Dirección"
+    },
+    "messages": {
+      "welcome": "Bienvenido",
+      "loading": "Cargando...",
+      "error": "Ocurrió un error",
+      "success": "Operación completada con éxito",
+      "confirm": "¿Está seguro?"
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Bienvenido",
+      "description": "Bienvenido a nuestra aplicación"
+    },
+    "account": {
+      "title": "Configuración de cuenta",
+      "notifications": {
+        "title": "Notificaciones",
+        "description": "Gestiona tus preferencias de notificación"
+      }
+    }
+  },
+  "navigation": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "settings": "Configuración",
+    "profile": "Perfil"
+  },
+  "messages": {
+    "unauthorized": "Acceso no autorizado.",
+    "system_error": "¡Vaya! Algo no salió según lo planeado. Por favor, inténtelo de nuevo en un momento.",
+    "invalid_input": "Entrada inválida. Por favor, verifique sus datos e inténtelo de nuevo.",
+    "data_not_found": "Datos solicitados no encontrados.",
+    "delete_restricted_error": "No se puede eliminar este registro porque está vinculado a otros registros."
+  }
+}

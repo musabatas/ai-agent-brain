@@ -1,0 +1,248 @@
+/* ═══════════════════════════════════════════════════
+   AI Dev Brain — Apple Monochrome Design System
+   Clean surfaces, generous spacing, subtle depth
+   ═══════════════════════════════════════════════════ */
+
+/* ── Override primary to monochrome ── */
+:root {
+  --primary: var(--color-zinc-900);
+  --primary-foreground: var(--color-white);
+  --ring: var(--color-zinc-400);
+}
+
+.dark {
+  --primary: var(--color-zinc-100);
+  --primary-foreground: var(--color-zinc-950);
+  --ring: var(--color-zinc-500);
+}
+
+/* ── Design Tokens ── */
+:root {
+  --adb-accent: oklch(25% 0 0);               /* Near-black accent */
+  --adb-accent-soft: oklch(96% 0.003 260);    /* Subtle gray tint */
+  --adb-success: oklch(65% 0.2 150);          /* Apple Green */
+  --adb-warning: oklch(75% 0.18 70);          /* Apple Orange */
+  --adb-danger: oklch(60% 0.24 25);           /* Apple Red */
+  --adb-surface: oklch(98% 0.002 260);        /* Slightly off-white */
+  --adb-surface-raised: oklch(100% 0 0);      /* Pure white cards */
+  --adb-surface-tint: oklch(97% 0.003 260);   /* Neutral tinted surface */
+  --adb-shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.04);
+  --adb-shadow-md: 0 2px 8px oklch(0% 0 0 / 0.06), 0 1px 2px oklch(0% 0 0 / 0.04);
+  --adb-shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.08), 0 2px 4px oklch(0% 0 0 / 0.04);
+  --adb-radius: 12px;
+  --adb-radius-lg: 16px;
+}
+
+.dark {
+  --adb-accent: oklch(90% 0 0);               /* Near-white accent */
+  --adb-accent-soft: oklch(20% 0.005 260);    /* Dark gray tint */
+  --adb-success: oklch(72% 0.18 150);
+  --adb-warning: oklch(80% 0.16 70);
+  --adb-danger: oklch(68% 0.22 25);
+  --adb-surface: oklch(14% 0.005 260);
+  --adb-surface-raised: oklch(18% 0.008 260);
+  --adb-surface-tint: oklch(17% 0.005 260);
+  --adb-shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.2);
+  --adb-shadow-md: 0 2px 8px oklch(0% 0 0 / 0.3), 0 1px 2px oklch(0% 0 0 / 0.15);
+  --adb-shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.4), 0 2px 4px oklch(0% 0 0 / 0.2);
+}
+
+/* ── Dot Grid — barely visible texture ── */
+.adb-dotgrid {
+  background-image: radial-gradient(circle, oklch(50% 0 0 / 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.dark .adb-dotgrid {
+  background-image: radial-gradient(circle, oklch(60% 0 0 / 0.03) 1px, transparent 1px);
+}
+
+/* ── Stat Card — elevated surface with soft shadow ── */
+.adb-stat-card {
+  background: var(--adb-surface-raised);
+  border: 1px solid oklch(50% 0 0 / 0.06);
+  border-radius: var(--adb-radius);
+  box-shadow: var(--adb-shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.adb-stat-card:hover {
+  box-shadow: var(--adb-shadow-md);
+  transform: translateY(-1px);
+}
+
+.dark .adb-stat-card {
+  background: var(--adb-surface-raised);
+  border-color: oklch(30% 0.01 260);
+}
+
+/* ── Project Card — Apple-style elevated card ── */
+.adb-project-card {
+  background: var(--adb-surface-raised);
+  border: 1px solid oklch(50% 0 0 / 0.06);
+  border-radius: var(--adb-radius);
+  box-shadow: var(--adb-shadow-sm);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  position: relative;
+}
+
+.adb-project-card:hover {
+  box-shadow: var(--adb-shadow-md);
+  transform: translateY(-1px);
+}
+
+.dark .adb-project-card {
+  background: var(--adb-surface-raised);
+  border-color: oklch(28% 0.01 260);
+}
+
+.dark .adb-project-card:hover {
+  border-color: oklch(35% 0.01 260);
+}
+
+/* ── Tab Navigation — minimal underline ── */
+.adb-tab {
+  position: relative;
+  color: var(--muted-foreground);
+  transition: color 0.15s ease;
+  padding-bottom: 2px;
+  font-weight: 500;
+}
+
+.adb-tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--foreground);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transition: transform 0.2s ease;
+}
+
+.adb-tab:hover {
+  color: var(--foreground);
+}
+
+.adb-tab[data-active='true'] {
+  color: var(--foreground);
+}
+
+.adb-tab[data-active='true']::after {
+  transform: scaleX(1);
+}
+
+/* ── Glow — now a soft shadow ── */
+.adb-glow {
+  box-shadow: var(--adb-shadow-md);
+  transition: box-shadow 0.3s ease;
+}
+
+.adb-glow:hover {
+  box-shadow: var(--adb-shadow-lg);
+}
+
+.adb-glow-border {
+  border-color: oklch(50% 0 0 / 0.1);
+}
+
+/* ── Pulse — gentle breathe ── */
+@keyframes apple-breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.97); }
+}
+
+.adb-pulse {
+  animation: apple-breathe 2.5s ease-in-out infinite;
+}
+
+/* ── Onboarding Background — soft gradients ── */
+.adb-onboard-bg {
+  background:
+    radial-gradient(ellipse at 30% 40%, oklch(92% 0 0 / 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, oklch(94% 0 0 / 0.3) 0%, transparent 40%),
+    var(--background);
+}
+
+.dark .adb-onboard-bg {
+  background:
+    radial-gradient(ellipse at 30% 40%, oklch(18% 0 0 / 0.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, oklch(20% 0 0 / 0.3) 0%, transparent 40%),
+    var(--background);
+}
+
+/* ── Page Entrance ── */
+.adb-fade-in {
+  animation: adb-enter 0.35s ease-out;
+}
+
+@keyframes adb-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Stagger Children ── */
+.adb-stagger > * {
+  animation: adb-enter 0.35s ease-out both;
+}
+
+.adb-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.adb-stagger > *:nth-child(2) { animation-delay: 40ms; }
+.adb-stagger > *:nth-child(3) { animation-delay: 80ms; }
+.adb-stagger > *:nth-child(4) { animation-delay: 120ms; }
+.adb-stagger > *:nth-child(5) { animation-delay: 160ms; }
+.adb-stagger > *:nth-child(6) { animation-delay: 200ms; }
+.adb-stagger > *:nth-child(7) { animation-delay: 240ms; }
+.adb-stagger > *:nth-child(8) { animation-delay: 280ms; }
+
+/* Legacy animation name kept for inline styles */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Monospace Data ── */
+.adb-mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-feature-settings: 'liga' 0;
+}
+
+/* ── Left Accent Line ── */
+.adb-neural-line {
+  position: relative;
+}
+
+.adb-neural-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 1px;
+  background: linear-gradient(to bottom, oklch(40% 0 0 / 0.3), transparent);
+}
+
+.dark .adb-neural-line::before {
+  background: linear-gradient(to bottom, oklch(70% 0 0 / 0.2), transparent);
+}
+
+/* ── Kanban Column ── */
+.adb-kanban-col {
+  background: var(--adb-surface);
+  border-radius: var(--adb-radius);
+  border: 1px solid oklch(50% 0 0 / 0.05);
+}
+
+.dark .adb-kanban-col {
+  background: oklch(15% 0.005 260);
+  border-color: oklch(25% 0.01 260);
+}
