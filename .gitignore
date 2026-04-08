@@ -54,6 +54,7 @@ logs/
 # typescript
 dist/
 .cache
+*.tsbuildinfo
 
 # turbo
 .turbo
