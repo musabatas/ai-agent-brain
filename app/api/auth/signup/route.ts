@@ -22,7 +22,7 @@ async function sendVerificationEmail(user: User) {
   });
 
   // Construct the verification URL.
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token.token}`;
+  const verificationUrl = `${(process.env.NEXTAUTH_URL || '').replace(/\/+$/, '')}/verify-email?token=${token.token}`;
 
   // Send the verification email.
   await sendEmail({

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token.token}`;
+    const verificationUrl = `${(process.env.NEXTAUTH_URL || '').replace(/\/+$/, '')}/verify-email?token=${token.token}`;
 
     await sendEmail({
       to: user.email,

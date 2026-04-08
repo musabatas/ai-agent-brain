@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Create reset URL
-    const resetUrl = `${process.env.NEXTAUTH_URL}/change-password?token=${token}`;
+    const resetUrl = `${(process.env.NEXTAUTH_URL || '').replace(/\/+$/, '')}/change-password?token=${token}`;
 
     // Send password reset email
     await sendEmail({
