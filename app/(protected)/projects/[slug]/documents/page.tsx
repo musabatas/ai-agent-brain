@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -111,6 +112,7 @@ export default function DocumentsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const debouncedSearch = useDebouncedValue(search);
@@ -128,6 +130,14 @@ export default function DocumentsPage({
     });
 
   const documents = data?.pages.flatMap((p) => p.data) ?? [];
+
+  const openId = searchParams.get('open');
+  useEffect(() => {
+    if (openId && documents.length > 0 && !selectedDoc) {
+      const match = documents.find((d) => d.id === openId);
+      if (match) setSelectedDoc(match);
+    }
+  }, [openId, documents, selectedDoc]);
 
   const sentinelRef = useIntersectionObserver(() => fetchNextPage(), {
     enabled: !!hasNextPage && !isFetchingNextPage,

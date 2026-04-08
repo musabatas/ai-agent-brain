@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -122,6 +123,7 @@ export default function DecisionsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -145,6 +147,14 @@ export default function DecisionsPage({
 
   const decisions = data?.pages.flatMap((p) => p.data) ?? [];
   const total = data?.pages[0]?.pagination.total ?? 0;
+
+  const openId = searchParams.get('open');
+  useEffect(() => {
+    if (openId && decisions.length > 0 && !selectedDecision) {
+      const match = decisions.find((d) => d.id === openId);
+      if (match) setSelectedDecision(match);
+    }
+  }, [openId, decisions, selectedDecision]);
 
   const sentinelRef = useIntersectionObserver(fetchNextPage, {
     enabled: hasNextPage && !isFetchingNextPage,

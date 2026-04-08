@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -110,6 +111,7 @@ export default function RulesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [scopeFilter, setScopeFilter] = useState('all');
   const [selectedRule, setSelectedRule] = useState<Rule | null>(null);
@@ -132,6 +134,14 @@ export default function RulesPage({
   });
 
   const rules = data?.pages.flatMap((p) => p.data) ?? [];
+
+  const openId = searchParams.get('open');
+  useEffect(() => {
+    if (openId && rules.length > 0 && !selectedRule) {
+      const match = rules.find((r) => r.id === openId);
+      if (match) setSelectedRule(match);
+    }
+  }, [openId, rules, selectedRule]);
 
   const grouped = rules.reduce(
     (acc, rule) => {

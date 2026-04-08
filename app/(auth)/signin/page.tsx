@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RiErrorWarningFill } from '@remixicon/react';
 import { AlertCircle, Eye, EyeOff, Mail } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -36,8 +35,8 @@ export default function Page() {
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(getSigninSchema()),
     defaultValues: {
-      email: 'owner@kt.com',
-      password: '123456',
+      email: '',
+      password: '',
       rememberMe: false,
     },
   });
@@ -112,18 +111,6 @@ export default function Page() {
             Sign in to AI Dev Brain
           </h1>
         </div>
-
-        <Alert size="sm" close={false}>
-          <AlertIcon>
-            <RiErrorWarningFill className="text-primary" />
-          </AlertIcon>
-          <AlertTitle className="text-accent-foreground">
-            Use <span className="text-mono font-semibold">owner@kt.com</span>{' '}
-            and{' '}
-            <span className="text-mono font-semibold">123456</span> for demo
-            access.
-          </AlertTitle>
-        </Alert>
 
         <div className="flex flex-col gap-3.5">
           <Button

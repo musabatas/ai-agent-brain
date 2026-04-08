@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -88,6 +89,7 @@ export default function FeaturesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
@@ -117,6 +119,15 @@ export default function FeaturesPage({
   });
 
   const features: Feature[] = data?.data ?? [];
+
+  // Auto-open from ?open= query param
+  const openId = searchParams.get('open');
+  useEffect(() => {
+    if (openId && features.length > 0 && !selectedFeatureId) {
+      const match = features.find((f) => f.id === openId);
+      if (match) setSelectedFeatureId(match.id);
+    }
+  }, [openId, features, selectedFeatureId]);
 
   const { data: featureDetail, isLoading: detailLoading } = useQuery<Feature>({
     queryKey: ['project-feature-detail', slug, selectedFeatureId],

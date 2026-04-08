@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -136,6 +137,7 @@ export default function TasksPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
@@ -165,6 +167,15 @@ export default function TasksPage({
 
   const tasks = data?.pages.flatMap((p) => p.data) ?? [];
   const total = data?.pages[0]?.pagination.total ?? 0;
+
+  // Auto-open item from ?open= query param (e.g. from global search)
+  const openId = searchParams.get('open');
+  useEffect(() => {
+    if (openId && tasks.length > 0 && !selectedTask) {
+      const match = tasks.find((t) => t.id === openId);
+      if (match) setSelectedTask(match);
+    }
+  }, [openId, tasks, selectedTask]);
 
   const sentinelRef = useIntersectionObserver(fetchNextPage, {
     enabled: hasNextPage && !isFetchingNextPage,

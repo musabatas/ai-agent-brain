@@ -3,20 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SearchDialog } from '@/partials/dialogs/search/search-dialog';
-import { AppsDropdownMenu } from '@/partials/topbar/apps-dropdown-menu';
-import { ChatSheet } from '@/partials/topbar/chat-sheet';
-import { NotificationsSheet } from '@/partials/topbar/notifications-sheet';
-import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
-import {
-  Bell,
-  LayoutGrid,
-  Menu,
-  MessageCircleMore,
-  Search,
-  SquareChevronRight,
-} from 'lucide-react';
-import { toAbsoluteUrl } from '@/lib/helpers';
+import { Menu, Search, SquareChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useScrollPosition } from '@/hooks/use-scroll-position';
@@ -29,10 +16,13 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Container } from '@/components/common/container';
+import { UserDropdownMenu } from '@/partials/topbar/user-dropdown-menu';
+import { toAbsoluteUrl } from '@/lib/helpers';
 import { Breadcrumb } from './breadcrumb';
 import { MegaMenu } from './mega-menu';
 import { MegaMenuMobile } from './mega-menu-mobile';
 import { SidebarNav } from './sidebar-nav';
+import { GlobalSearchDialog } from './global-search';
 
 export function Header() {
   const [isSidebarSheetOpen, setIsSidebarSheetOpen] = useState(false);
@@ -44,7 +34,6 @@ export function Header() {
   const scrollPosition = useScrollPosition();
   const headerSticky: boolean = scrollPosition > 0;
 
-  // Close sheet when route changes
   useEffect(() => {
     setIsSidebarSheetOpen(false);
     setIsMegaMenuSheetOpen(false);
@@ -58,7 +47,7 @@ export function Header() {
       )}
     >
       <Container className="flex justify-between items-stretch lg:gap-4">
-        {/* HeaderLogo */}
+        {/* Mobile Logo + Nav */}
         <div className="flex gap-1 lg:hidden items-center gap-2.5">
           <Link href="/dashboard" className="shrink-0">
             <span className="text-sm font-bold text-foreground">ADB</span>
@@ -111,76 +100,25 @@ export function Header() {
           </div>
         </div>
 
-        {/* Main Content (MegaMenu or Breadcrumbs) */}
+        {/* Breadcrumbs / MegaMenu */}
         {pathname.startsWith('/account') ? (
           <Breadcrumb />
         ) : (
           !mobileMode && <MegaMenu />
         )}
 
-        {/* HeaderTopbar */}
-        <div className="flex items-center gap-3">
-          <>
-              {!mobileMode && (
-                <SearchDialog
-                  trigger={
-                    <Button
-                      variant="ghost"
-                      mode="icon"
-                      shape="circle"
-                      className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"
-                    >
-                      <Search className="size-4.5!" />
-                    </Button>
-                  }
-                />
-              )}
-              <NotificationsSheet
-                trigger={
-                  <Button
-                    variant="ghost"
-                    mode="icon"
-                    shape="circle"
-                    className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"
-                  >
-                    <Bell className="size-4.5!" />
-                  </Button>
-                }
+        {/* Topbar Actions */}
+        <div className="flex items-center gap-2.5">
+          {!mobileMode && <GlobalSearchDialog />}
+          <UserDropdownMenu
+            trigger={
+              <img
+                className="size-9 rounded-full border-2 border-green-500 shrink-0 cursor-pointer"
+                src={toAbsoluteUrl('/media/avatars/300-2.png')}
+                alt="User Avatar"
               />
-              <ChatSheet
-                trigger={
-                  <Button
-                    variant="ghost"
-                    mode="icon"
-                    shape="circle"
-                    className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"
-                  >
-                    <MessageCircleMore className="size-4.5!" />
-                  </Button>
-                }
-              />
-              <AppsDropdownMenu
-                trigger={
-                  <Button
-                    variant="ghost"
-                    mode="icon"
-                    shape="circle"
-                    className="size-9 hover:bg-primary/10 hover:[&_svg]:text-primary"
-                  >
-                    <LayoutGrid className="size-4.5!" />
-                  </Button>
-                }
-              />
-              <UserDropdownMenu
-                trigger={
-                  <img
-                    className="size-9 rounded-full border-2 border-green-500 shrink-0 cursor-pointer"
-                    src={toAbsoluteUrl('/media/avatars/300-2.png')}
-                    alt="User Avatar"
-                  />
-                }
-              />
-          </>
+            }
+          />
         </div>
       </Container>
     </header>

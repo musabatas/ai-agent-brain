@@ -1,6 +1,7 @@
 'use client';
 
-import { use, useState } from 'react';
+import { use, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -97,6 +98,7 @@ export default function MemoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [selectedMem, setSelectedMem] = useState<Memory | null>(null);
@@ -119,6 +121,14 @@ export default function MemoryPage({
   });
 
   const memories = data?.pages.flatMap((p) => p.data) ?? [];
+
+  const openId = searchParams.get('open');
+  useEffect(() => {
+    if (openId && memories.length > 0 && !selectedMem) {
+      const match = memories.find((m) => m.id === openId);
+      if (match) setSelectedMem(match);
+    }
+  }, [openId, memories, selectedMem]);
 
   const grouped = memories.reduce(
     (acc, m) => {
