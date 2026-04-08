@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { created, unauthorized, badRequest } from '@/lib/api-response';
 import { CreateRuleSchema } from '@/lib/schemas/rule.schema';
 import { ruleService } from '@/lib/services/rule.service';
 
@@ -10,9 +11,7 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const { searchParams } = new URL(req.url);
@@ -26,8 +25,8 @@ export async function GET(
 
     const result = await ruleService.list(auth.orgId, slug, { scope, isActive, search, limit, offset });
     return NextResponse.json(result);
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -37,20 +36,16 @@ export async function POST(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const body = await req.json();
     const parsed = CreateRuleSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid input.', details: parsed.error.flatten() }, { status: 400 });
-    }
+    if (!parsed.success) return badRequest('Invalid input.', parsed.error.flatten());
 
     const rule = await ruleService.create(auth, slug, parsed.data);
-    return NextResponse.json({ data: rule }, { status: 201 });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return created(rule);
+  } catch (error) {
+    return handleApiError(error);
   }
 }

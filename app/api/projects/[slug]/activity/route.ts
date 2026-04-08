@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { unauthorized, notFound } from '@/lib/api-response';
 import prisma from '@/lib/prisma';
 import { resolveProject } from '@/lib/services/_helpers';
 
@@ -10,15 +11,11 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const project = await resolveProject(auth.orgId, slug);
-    if (!project) {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
-    }
+    if (!project) return notFound('Project');
 
     const { searchParams } = new URL(req.url);
     const limit = Math.min(parseInt(searchParams.get('limit') || '50', 10), 200);
@@ -39,7 +36,7 @@ export async function GET(
       data: activities,
       pagination: { total, limit, offset, hasMore: offset + activities.length < total },
     });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }

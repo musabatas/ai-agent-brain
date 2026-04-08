@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
 import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
+import { API_KEY_PREFIX } from '@/config/constants';
 import prisma from '@/lib/prisma';
 
 export type OrgRole = 'OWNER' | 'ADMIN' | 'MEMBER';
@@ -25,7 +26,7 @@ export async function getAuthContext(
   const authHeader = req.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     const rawKey = authHeader.slice(7);
-    if (rawKey.startsWith('adb_sk_')) {
+    if (rawKey.startsWith(API_KEY_PREFIX)) {
       return resolveApiKey(rawKey);
     }
   }
@@ -71,7 +72,7 @@ export async function getUserFromRequest(
   const authHeader = req.headers.get('authorization');
   if (authHeader?.startsWith('Bearer ')) {
     const rawKey = authHeader.slice(7);
-    if (rawKey.startsWith('adb_sk_')) {
+    if (rawKey.startsWith(API_KEY_PREFIX)) {
       const ctx = await resolveApiKey(rawKey);
       return ctx ? { userId: ctx.userId, authType: 'api-key' } : null;
     }

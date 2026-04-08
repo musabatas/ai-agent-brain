@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { getClientIP } from '@/lib/api';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { systemLog } from '@/services/system-log';
 import { NotificationSettingsSchema } from '@/app/(protected)/user-management/settings/forms/notification-settings-schema';
@@ -60,12 +61,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 },
     );
-  } catch {
-    return NextResponse.json(
-      {
-        message: 'An error occurred while updating the notification settings.',
-      },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

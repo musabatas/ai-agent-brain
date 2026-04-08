@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
+import { handleApiError } from '@/lib/api-error';
 import { isUnique } from '@/lib/db';
 import { prisma } from '@/lib/prisma';
 import { systemLog } from '@/services/system-log';
@@ -81,11 +82,8 @@ export async function GET(request: Request) {
       },
       empty: isTableEmpty, // Use the fallback check
     });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -132,10 +130,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(newPermission);
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

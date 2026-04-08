@@ -86,6 +86,22 @@ export function registerRuleTools(server: McpServer, auth: AuthContext, defaultP
   );
 
   server.tool(
+    'rule.activate',
+    'Re-activate a previously deactivated rule',
+    {
+      project: p,
+      id: z.string().describe('Rule ID'),
+    },
+    async ({ project, id }) => {
+      const slug = project ?? defaultProject;
+      if (!slug) return NO_PROJECT;
+      const result = await ruleService.activate(auth, slug, id);
+      if (!result) return { content: [{ type: 'text' as const, text: 'Rule not found' }], isError: true };
+      return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
+    },
+  );
+
+  server.tool(
     'rule.deactivate',
     'Deactivate a rule (soft-disable)',
     {

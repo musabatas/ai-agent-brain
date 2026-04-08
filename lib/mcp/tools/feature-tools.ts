@@ -85,4 +85,20 @@ export function registerFeatureTools(server: McpServer, auth: AuthContext, defau
       return { content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }] };
     },
   );
+
+  server.tool(
+    'feature.delete',
+    'Delete a feature and unlink its tasks',
+    {
+      project: p,
+      id: z.string().describe('Feature ID'),
+    },
+    async ({ project, id }) => {
+      const slug = project ?? defaultProject;
+      if (!slug) return NO_PROJECT;
+      const result = await featureService.delete(auth, slug, id);
+      if (!result) return { content: [{ type: 'text' as const, text: 'Feature not found' }], isError: true };
+      return { content: [{ type: 'text' as const, text: `Deleted feature "${result.title}"` }] };
+    },
+  );
 }

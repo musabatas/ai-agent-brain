@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 
@@ -31,10 +32,7 @@ export async function GET() {
     }
 
     return NextResponse.json(user);
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

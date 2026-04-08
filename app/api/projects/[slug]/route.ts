@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { ok, unauthorized, notFound, badRequest } from '@/lib/api-response';
 import { UpdateProjectSchema } from '@/lib/schemas/project.schema';
 import { projectService } from '@/lib/services/project.service';
 
@@ -10,17 +11,13 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const project = await projectService.getBySlug(auth.orgId, slug);
-    if (!project) {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
-    }
+    if (!project) return notFound('Project');
 
-    return NextResponse.json({ data: project });
+    return ok(project);
   } catch (error) {
     return handleApiError(error);
   }
@@ -32,24 +29,18 @@ export async function PATCH(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const project = await projectService.getBySlug(auth.orgId, slug);
-    if (!project) {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
-    }
+    if (!project) return notFound('Project');
 
     const body = await req.json();
     const parsed = UpdateProjectSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid input.', details: parsed.error.flatten() }, { status: 400 });
-    }
+    if (!parsed.success) return badRequest('Invalid input.', parsed.error.flatten());
 
     const updated = await projectService.update(auth, project.id, parsed.data);
-    return NextResponse.json({ data: updated });
+    return ok(updated);
   } catch (error) {
     return handleApiError(error);
   }
@@ -61,18 +52,14 @@ export async function DELETE(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const project = await projectService.getBySlug(auth.orgId, slug);
-    if (!project) {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
-    }
+    if (!project) return notFound('Project');
 
     const archived = await projectService.archive(auth, project.id);
-    return NextResponse.json({ data: archived });
+    return ok(archived);
   } catch (error) {
     return handleApiError(error);
   }

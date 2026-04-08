@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { PAGINATION, SLUG_SUFFIX_LENGTH } from '@/config/constants';
 
 /**
  * Paginated response shape for list endpoints.
@@ -31,7 +32,7 @@ export async function paginatedQuery<T>(
     include?: object;
   },
 ): Promise<PaginatedResult<T>> {
-  const limit = Math.min(options.limit ?? 50, 200);
+  const limit = Math.min(options.limit ?? PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT);
   const offset = options.offset ?? 0;
 
   const [data, total] = await Promise.all([
@@ -87,7 +88,7 @@ export function slugify(name: string): string {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 
-  const suffix = Math.random().toString(36).slice(2, 6);
+  const suffix = Math.random().toString(36).slice(2, 2 + SLUG_SUFFIX_LENGTH);
   return `${base}-${suffix}`;
 }
 

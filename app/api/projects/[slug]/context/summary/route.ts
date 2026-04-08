@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { ok, unauthorized, notFound } from '@/lib/api-response';
 import { contextService } from '@/lib/services/context.service';
 
 export async function GET(
@@ -9,18 +10,14 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const result = await contextService.summary(auth.orgId, slug);
-    if (!result) {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
-    }
+    if (!result) return notFound('Project');
 
-    return NextResponse.json({ data: result });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(result);
+  } catch (error) {
+    return handleApiError(error);
   }
 }

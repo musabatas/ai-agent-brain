@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-guard';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
@@ -18,10 +19,7 @@ export async function GET() {
     });
 
     return NextResponse.json(roles);
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

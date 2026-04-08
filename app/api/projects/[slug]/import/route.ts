@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
+import { handleApiError } from '@/lib/api-error';
+import { ok, created, unauthorized, notFound, badRequest } from '@/lib/api-response';
 import { featureService } from '@/lib/services/feature.service';
 import { taskService } from '@/lib/services/task.service';
 import { decisionService } from '@/lib/services/decision.service';
@@ -69,9 +71,7 @@ export async function POST(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const body = await req.json();
@@ -84,35 +84,21 @@ export async function POST(
     };
 
     if (!entity || !action || !data) {
-      return NextResponse.json(
-        { message: 'Missing required fields: entity, action, data' },
-        { status: 400 },
-      );
+      return badRequest('Missing required fields: entity, action, data');
     }
 
     const config = ENTITY_CONFIG[entity as EntityType];
     if (!config) {
-      return NextResponse.json(
-        { message: `Unknown entity: ${entity}. Valid: ${Object.keys(ENTITY_CONFIG).join(', ')}` },
-        { status: 400 },
-      );
+      return badRequest(`Unknown entity: ${entity}. Valid: ${Object.keys(ENTITY_CONFIG).join(', ')}`);
     }
 
     if (action === 'update' && !id && entity !== 'memory') {
-      return NextResponse.json(
-        { message: 'id is required for update action' },
-        { status: 400 },
-      );
+      return badRequest('id is required for update action');
     }
 
     const schema = action === 'create' ? config.createSchema : config.updateSchema;
     const parsed = schema.safeParse(data);
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: 'Invalid input', details: parsed.error.flatten() },
-        { status: 400 },
-      );
-    }
+    if (!parsed.success) return badRequest('Invalid input', parsed.error.flatten());
 
     let result;
     if (action === 'create') {
@@ -121,19 +107,10 @@ export async function POST(
       result = await config.update(auth, slug, id!, parsed.data);
     }
 
-    if (!result) {
-      return NextResponse.json(
-        { message: 'Project or entity not found' },
-        { status: 404 },
-      );
-    }
+    if (!result) return notFound('Project or entity');
 
-    return NextResponse.json({ data: result }, { status: action === 'create' ? 201 : 200 });
+    return action === 'create' ? created(result) : ok(result);
   } catch (error) {
-    console.error('Import error:', error);
-    return NextResponse.json(
-      { message: 'Import failed' },
-      { status: 500 },
-    );
+    return handleApiError(error);
   }
 }

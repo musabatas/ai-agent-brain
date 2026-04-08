@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { ok, unauthorized, notFound, badRequest } from '@/lib/api-response';
 import { UpdateRuleSchema } from '@/lib/schemas/rule.schema';
 import { ruleService } from '@/lib/services/rule.service';
 
@@ -10,19 +11,15 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug, id } = await params;
     const rule = await ruleService.get(auth.orgId, slug, id);
-    if (!rule) {
-      return NextResponse.json({ message: 'Rule not found' }, { status: 404 });
-    }
+    if (!rule) return notFound('Rule');
 
-    return NextResponse.json({ data: rule });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(rule);
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -32,25 +29,19 @@ export async function PATCH(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug, id } = await params;
     const body = await req.json();
     const parsed = UpdateRuleSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid input.', details: parsed.error.flatten() }, { status: 400 });
-    }
+    if (!parsed.success) return badRequest('Invalid input.', parsed.error.flatten());
 
     const rule = await ruleService.update(auth, slug, id, parsed.data);
-    if (!rule) {
-      return NextResponse.json({ message: 'Rule not found' }, { status: 404 });
-    }
+    if (!rule) return notFound('Rule');
 
-    return NextResponse.json({ data: rule });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(rule);
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -60,18 +51,14 @@ export async function DELETE(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug, id } = await params;
     const rule = await ruleService.delete(auth, slug, id);
-    if (!rule) {
-      return NextResponse.json({ message: 'Rule not found' }, { status: 404 });
-    }
+    if (!rule) return notFound('Rule');
 
-    return NextResponse.json({ data: rule });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(rule);
+  } catch (error) {
+    return handleApiError(error);
   }
 }

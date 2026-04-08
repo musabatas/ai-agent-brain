@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { getClientIP } from '@/lib/api';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { systemLog } from '@/services/system-log';
 import { SocialSettingsSchema } from '@/app/(protected)/user-management/settings/forms/social-settings-schema';
@@ -61,10 +62,7 @@ export async function POST(request: NextRequest) {
       { message: 'Social settings updated successfully' },
       { status: 200 },
     );
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

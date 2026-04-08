@@ -15,23 +15,23 @@ enum UserStatus {
 }
 
 model User {
-  id              String       @id @default(uuid())
-  email           String       @unique
+  id              String      @id @default(uuid())
+  email           String      @unique
   password        String?
   country         String?
   timezone        String?
   name            String?
   roleId          String
-  status          UserStatus   @default(INACTIVE)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  status          UserStatus  @default(INACTIVE)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
   lastSignInAt    DateTime?
   emailVerifiedAt DateTime?
-  isTrashed       Boolean      @default(false)
+  isTrashed       Boolean     @default(false)
   avatar          String?
   invitedByUserId String?
-  isProtected     Boolean      @default(false)
-  role            UserRole     @relation(fields: [roleId], references: [id])
+  isProtected     Boolean     @default(false)
+  role            UserRole    @relation(fields: [roleId], references: [id])
   systemLog       SystemLog[]
   accounts        Account[]
   Session         Session[]
@@ -184,9 +184,11 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  members  OrgMember[]
-  apiKeys  ApiKey[]
-  projects Project[]
+  members   OrgMember[]
+  apiKeys   ApiKey[]
+  projects  Project[]
+  auditLogs AuditLog[]
+  webhooks  Webhook[]
 }
 
 model OrgMember {
@@ -453,4 +455,46 @@ model Activity {
   @@index([projectId])
   @@index([projectId, createdAt])
   @@index([entityType, entityId])
+}
+
+// ── Audit Log ──
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  orgId      String
+  actorId    String
+  action     String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId, createdAt])
+  @@index([orgId, actorId])
+  @@index([orgId, entityType])
+}
+
+// ── Webhooks ──
+
+model Webhook {
+  id          String    @id @default(uuid())
+  orgId       String
+  url         String
+  secret      String
+  events      String[]  @default([])
+  isActive    Boolean   @default(true)
+  failCount   Int       @default(0)
+  lastFiredAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([orgId, isActive])
 }

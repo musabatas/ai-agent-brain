@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
+import { API_KEY_PREFIX, API_KEY_BYTES } from '@/config/constants';
 
 export const apiKeyService = {
   /**
@@ -10,8 +11,7 @@ export const apiKeyService = {
     auth: AuthContext,
     data: { name: string; expiresAt?: Date },
   ) {
-    // Generate: adb_sk_ + 40 random hex chars
-    const rawKey = `adb_sk_${crypto.randomBytes(20).toString('hex')}`;
+    const rawKey = `${API_KEY_PREFIX}${crypto.randomBytes(API_KEY_BYTES).toString('hex')}`;
     const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
     const keyPrefix = rawKey.slice(0, 15); // "adb_sk_" + first 8 hex chars
 

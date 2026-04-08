@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { systemLog } from '@/services/system-log';
 
@@ -61,10 +62,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({
       message: 'Delete selected success',
     });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

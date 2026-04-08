@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { getClientIP } from '@/lib/api';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { deleteFromS3, uploadToS3 } from '@/lib/s3-upload';
 import { systemLog } from '@/services/system-log';
@@ -148,13 +149,6 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    return NextResponse.json(
-      {
-        message:
-          "Oops! Something didn't go as planned. Please try again in a moment." +
-          error,
-      },
-      { status: 500 },
-    );
+    return handleApiError(error);
   }
 }

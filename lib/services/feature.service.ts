@@ -145,4 +145,26 @@ export const featureService = {
 
     return feature;
   },
+
+  async search(orgId: string, projectSlug: string, query: string, limit = 20) {
+    const project = await resolveProject(orgId, projectSlug);
+    if (!project) return null;
+
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
+    return prisma.feature.findMany({
+      where: {
+        projectId: project.id,
+        OR: [
+          { title: { contains: query, mode: 'insensitive' } },
+          { description: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      include: {
+        _count: { select: { tasks: true } },
+      },
+      take: safeLimit,
+      orderBy: { updatedAt: 'desc' },
+    });
+  },
 };

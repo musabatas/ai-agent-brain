@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { systemLog } from '@/services/system-log';
 import {
@@ -101,11 +102,8 @@ export async function GET(req: NextRequest) {
         limit,
       },
     });
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -189,10 +187,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 },
     );
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

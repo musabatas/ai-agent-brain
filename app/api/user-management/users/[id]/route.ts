@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
+import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { systemLog } from '@/services/system-log';
 import {
@@ -37,11 +38,8 @@ export async function GET(
     }
 
     return NextResponse.json(user);
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -115,11 +113,8 @@ export async function PUT(
       { message: 'User profile successfully updated.' },
       { status: 200 },
     );
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -177,10 +172,7 @@ export async function DELETE(
       { message: 'User successfully deleted.' },
       { status: 200 },
     );
-  } catch {
-    return NextResponse.json(
-      { message: 'Oops! Something went wrong. Please try again in a moment.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    return handleApiError(error);
   }
 }

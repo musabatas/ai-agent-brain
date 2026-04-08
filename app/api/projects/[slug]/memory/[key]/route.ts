@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { ok, unauthorized, notFound } from '@/lib/api-response';
 import { memoryService } from '@/lib/services/memory.service';
 
 export async function GET(
@@ -9,19 +10,15 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug, key } = await params;
     const memory = await memoryService.recall(auth.orgId, slug, key);
-    if (!memory) {
-      return NextResponse.json({ message: 'Memory not found' }, { status: 404 });
-    }
+    if (!memory) return notFound('Memory');
 
-    return NextResponse.json({ data: memory });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(memory);
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -31,18 +28,14 @@ export async function DELETE(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug, key } = await params;
     const memory = await memoryService.delete(auth, slug, key);
-    if (!memory) {
-      return NextResponse.json({ message: 'Memory not found' }, { status: 404 });
-    }
+    if (!memory) return notFound('Memory');
 
-    return NextResponse.json({ data: memory });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(memory);
+  } catch (error) {
+    return handleApiError(error);
   }
 }

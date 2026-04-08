@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { ok, unauthorized, badRequest } from '@/lib/api-response';
 import { taskService } from '@/lib/services/task.service';
 
 export async function GET(
@@ -9,23 +10,19 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const { searchParams } = new URL(req.url);
     const q = searchParams.get('q');
-    if (!q) {
-      return NextResponse.json({ message: 'Search query is required' }, { status: 400 });
-    }
+    if (!q) return badRequest('Search query is required');
 
     const limitParam = searchParams.get('limit');
     const limit = limitParam ? parseInt(limitParam, 10) : 20;
 
     const tasks = await taskService.search(auth.orgId, slug, q, limit);
-    return NextResponse.json({ data: tasks });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return ok(tasks);
+  } catch (error) {
+    return handleApiError(error);
   }
 }

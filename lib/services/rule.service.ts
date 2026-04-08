@@ -95,6 +95,20 @@ export const ruleService = {
     return rule;
   },
 
+  async activate(auth: AuthContext, projectSlug: string, ruleId: string) {
+    const project = await resolveProject(auth.orgId, projectSlug);
+    if (!project) return null;
+
+    const rule = await prisma.rule.update({
+      where: { id: ruleId },
+      data: { isActive: true },
+    });
+
+    await logActivity(auth, project.id, 'rule.activated', 'rule', rule.id, `Activated rule "${rule.title}"`);
+
+    return rule;
+  },
+
   async deactivate(auth: AuthContext, projectSlug: string, ruleId: string) {
     const project = await resolveProject(auth.orgId, projectSlug);
     if (!project) return null;

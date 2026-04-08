@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
+import { created, unauthorized, notFound, badRequest } from '@/lib/api-response';
 import { CreateFeatureSchema } from '@/lib/schemas/feature.schema';
 import { featureService } from '@/lib/services/feature.service';
 
@@ -10,9 +11,7 @@ export async function GET(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const { searchParams } = new URL(req.url);
@@ -23,8 +22,8 @@ export async function GET(
     const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!, 10) : undefined;
     const result = await featureService.list(auth.orgId, slug, { status, priority, search, limit, offset });
     return NextResponse.json(result);
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+  } catch (error) {
+    return handleApiError(error);
   }
 }
 
@@ -34,24 +33,18 @@ export async function POST(
 ) {
   try {
     const auth = await getAuthContext(req);
-    if (!auth) {
-      return NextResponse.json({ message: 'Unauthorized request' }, { status: 401 });
-    }
+    if (!auth) return unauthorized();
 
     const { slug } = await params;
     const body = await req.json();
     const parsed = CreateFeatureSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: 'Invalid input.', details: parsed.error.flatten() }, { status: 400 });
-    }
+    if (!parsed.success) return badRequest('Invalid input.', parsed.error.flatten());
 
     const feature = await featureService.create(auth, slug, parsed.data);
-    if (!feature) {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
-    }
+    if (!feature) return notFound('Project');
 
-    return NextResponse.json({ data: feature }, { status: 201 });
-  } catch {
-    return NextResponse.json({ message: 'Oops! Something went wrong. Please try again in a moment.' }, { status: 500 });
+    return created(feature);
+  } catch (error) {
+    return handleApiError(error);
   }
 }
