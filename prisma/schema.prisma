@@ -251,6 +251,8 @@ model Project {
   documents  Document[]
   memories   Memory[]
   activities Activity[]
+  comments   Comment[]
+  revisions  Revision[]
 
   @@unique([orgId, slug])
   @@index([orgId])
@@ -455,6 +457,65 @@ model Activity {
   @@index([projectId])
   @@index([projectId, createdAt])
   @@index([entityType, entityId])
+}
+
+// ── Comments ──
+
+model Comment {
+  id         String   @id @default(uuid())
+  projectId  String
+  authorId   String
+  entityType String
+  entityId   String
+  parentId   String?
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent  Comment? @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentThread")
+
+  @@index([projectId, entityType, entityId])
+  @@index([parentId])
+}
+
+// ── Revisions (Version History) ──
+
+model Revision {
+  id         String   @id @default(uuid())
+  projectId  String
+  entityType String
+  entityId   String
+  version    Int
+  data       Json
+  authorId   String
+  createdAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, entityType, entityId, version])
+  @@index([projectId, entityType, entityId])
+}
+
+// ── Notifications ──
+
+model Notification {
+  id         String   @id @default(uuid())
+  userId     String
+  orgId      String
+  type       String
+  title      String
+  message    String?
+  entityType String?
+  entityId   String?
+  projectId  String?
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@index([orgId])
 }
 
 // ── Audit Log ──

@@ -9,6 +9,7 @@ import { registerDocumentTools } from './tools/document-tools';
 import { registerMemoryTools } from './tools/memory-tools';
 import { registerContextTools } from './tools/context-tools';
 import { registerImportTools } from './tools/import-tools';
+import { registerCommentTools } from './tools/comment-tools';
 
 /**
  * Create a new MCP server instance with all tools registered.
@@ -36,6 +37,7 @@ export function createMcpServer(
   registerMemoryTools(server, auth, defaultProject);
   registerContextTools(server, auth, defaultProject);
   registerImportTools(server, auth, defaultProject);
+  registerCommentTools(server, auth, defaultProject);
 
   return server;
 }
