@@ -178,6 +178,7 @@ export default function OrgMembersPage() {
                 No organization members yet. Invite someone to get started.
               </div>
             ) : (
+              <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -230,6 +231,7 @@ export default function OrgMembersPage() {
                               <Button
                                 variant="ghost"
                                 mode="icon"
+                                aria-label="Remove member"
                                 className="size-8 text-muted-foreground hover:text-destructive"
                                 onClick={() => setRemoveTarget(member)}
                               >
@@ -243,6 +245,7 @@ export default function OrgMembersPage() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
           </CardContent>
         </Card>

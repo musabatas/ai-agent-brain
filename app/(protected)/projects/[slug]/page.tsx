@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useProject } from './components/project-context';
+import { AnalyticsCharts } from './components/analytics-charts';
 
 const statusDotColors: Record<string, string> = {
   DRAFT: 'bg-zinc-400',
@@ -33,7 +34,7 @@ const entityBadgeColors: Record<string, string> = {
 };
 
 export default function Page() {
-  const { summary, isSummaryLoading } = useProject();
+  const { summary, isSummaryLoading, project } = useProject();
 
   const LoadingSkeleton = () => (
     <div className="space-y-6">
@@ -202,6 +203,9 @@ export default function Page() {
           )}
         </div>
       )}
+
+      {/* Analytics Charts */}
+      <AnalyticsCharts slug={project.slug} />
 
       {/* Recent Activity — Timeline */}
       <div className="pt-2">

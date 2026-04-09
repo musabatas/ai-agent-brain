@@ -13,6 +13,7 @@ import {
   SheetBody,
   SheetContent,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Container } from '@/components/common/container';
@@ -59,7 +60,7 @@ export function Header() {
                 onOpenChange={setIsSidebarSheetOpen}
               >
                 <SheetTrigger asChild>
-                  <Button variant="ghost" mode="icon">
+                  <Button variant="ghost" mode="icon" aria-label="Open sidebar menu">
                     <Menu className="text-muted-foreground/70" />
                   </Button>
                 </SheetTrigger>
@@ -68,7 +69,9 @@ export function Header() {
                   side="left"
                   close={false}
                 >
-                  <SheetHeader className="p-0 space-y-0" />
+                  <SheetHeader className="p-0 space-y-0">
+                    <SheetTitle className="sr-only">Sidebar</SheetTitle>
+                  </SheetHeader>
                   <SheetBody className="p-0 overflow-y-auto">
                     <SidebarNav />
                   </SheetBody>
@@ -81,7 +84,7 @@ export function Header() {
                 onOpenChange={setIsMegaMenuSheetOpen}
               >
                 <SheetTrigger asChild>
-                  <Button variant="ghost" mode="icon">
+                  <Button variant="ghost" mode="icon" aria-label="Open navigation menu">
                     <SquareChevronRight className="text-muted-foreground/70" />
                   </Button>
                 </SheetTrigger>
@@ -90,7 +93,9 @@ export function Header() {
                   side="left"
                   close={false}
                 >
-                  <SheetHeader className="p-0 space-y-0" />
+                  <SheetHeader className="p-0 space-y-0">
+                    <SheetTitle className="sr-only">Navigation</SheetTitle>
+                  </SheetHeader>
                   <SheetBody className="p-0 overflow-y-auto">
                     <MegaMenuMobile />
                   </SheetBody>

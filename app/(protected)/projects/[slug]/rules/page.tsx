@@ -485,6 +485,7 @@ export default function RulesPage({
                         size="sm"
                         onClick={handleEdit}
                         className="h-7 px-2"
+                        aria-label="Edit rule"
                       >
                         <Pencil className="size-3" />
                       </Button>
@@ -493,6 +494,7 @@ export default function RulesPage({
                         size="sm"
                         className="h-7 px-2 text-destructive hover:text-destructive"
                         onClick={() => setDeleteTarget(selectedRule)}
+                        aria-label="Delete rule"
                       >
                         <Trash2 className="size-3" />
                       </Button>

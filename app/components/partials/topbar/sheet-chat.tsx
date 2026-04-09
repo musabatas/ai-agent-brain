@@ -38,6 +38,7 @@ import {
   SheetContent,
   SheetFooter,
   SheetHeader,
+  SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { AvatarGroup } from '../common/avatar-group';
@@ -108,7 +109,7 @@ export function SheetChat({ trigger }: { trigger: ReactNode }) {
       <SheetContent className="p-0 sm:max-w-[500px]">
         <SheetHeader>
           <div className="flex items-center justify-between p-3 border-b border-gray-100">
-            <h3 className="text-base font-semibold text-gray-900">Chat</h3>
+            <SheetTitle className="text-base font-semibold text-gray-900">Chat</SheetTitle>
           </div>
           <div className="border-b border-gray-200 p-3 shadow-xs">
             <div className="flex items-center justify-between gap-2">

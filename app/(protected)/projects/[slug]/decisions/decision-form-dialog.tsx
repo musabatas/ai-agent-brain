@@ -254,6 +254,7 @@ export function DecisionFormDialog({
                     size="sm"
                     className="absolute top-2 right-2 h-6 w-6 p-0 text-muted-foreground/50 hover:text-destructive"
                     onClick={() => altFieldArray.remove(idx)}
+                    aria-label="Remove alternative"
                   >
                     <X className="size-3.5" />
                   </Button>

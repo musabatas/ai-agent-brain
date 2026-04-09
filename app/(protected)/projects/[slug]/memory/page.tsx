@@ -441,6 +441,7 @@ export default function MemoryPage({
                         size="sm"
                         onClick={handleEdit}
                         className="h-7 px-2"
+                        aria-label="Edit memory"
                       >
                         <Pencil className="size-3" />
                       </Button>
@@ -449,6 +450,7 @@ export default function MemoryPage({
                         size="sm"
                         className="h-7 px-2 text-destructive hover:text-destructive"
                         onClick={() => setDeleteTarget(selectedMem)}
+                        aria-label="Delete memory"
                       >
                         <Trash2 className="size-3" />
                       </Button>

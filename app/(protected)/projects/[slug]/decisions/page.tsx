@@ -555,6 +555,7 @@ export default function DecisionsPage({
                           size="sm"
                           className="absolute top-2 right-2 h-6 w-6 p-0 text-muted-foreground/50 hover:text-destructive"
                           onClick={() => altFieldArray.remove(idx)}
+                          aria-label="Remove alternative"
                         >
                           <X className="size-3.5" />
                         </Button>
@@ -647,6 +648,7 @@ export default function DecisionsPage({
                             size="sm"
                             onClick={handleEdit}
                             className="h-7 px-2"
+                            aria-label="Edit decision"
                           >
                             <Pencil className="size-3" />
                           </Button>
@@ -654,6 +656,7 @@ export default function DecisionsPage({
                             variant="ghost"
                             size="sm"
                             className="h-7 px-2 text-destructive hover:text-destructive"
+                            aria-label="Delete decision"
                             onClick={() => setDeleteTarget(selectedDecision)}
                           >
                             <Trash2 className="size-3" />

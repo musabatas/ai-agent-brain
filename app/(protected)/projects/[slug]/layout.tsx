@@ -246,6 +246,7 @@ export default function ProjectLayout({
               disabled={refreshing || isLoading}
               className="shrink-0 size-8 flex items-center justify-center rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed mx-1 mb-0.5"
               title="Refresh project data"
+              aria-label="Refresh project data"
             >
               <RefreshCw
                 className={`size-3.5 ${refreshing ? 'animate-spin' : ''}`}

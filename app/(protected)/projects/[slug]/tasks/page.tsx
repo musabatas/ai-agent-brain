@@ -535,6 +535,7 @@ export default function TasksPage({
                                       <button
                                         type="button"
                                         className="text-muted-foreground/50 hover:text-destructive"
+                                        aria-label="Remove dependency"
                                         onClick={() =>
                                           field.onChange(
                                             selected.filter(
@@ -614,6 +615,7 @@ export default function TasksPage({
                         size="sm"
                         onClick={handleEdit}
                         className="h-7 px-2"
+                        aria-label="Edit task"
                       >
                         <Pencil className="size-3" />
                       </Button>
@@ -622,6 +624,7 @@ export default function TasksPage({
                         size="sm"
                         className="h-7 px-2 text-destructive hover:text-destructive"
                         onClick={() => setDeleteTarget(selectedTask)}
+                        aria-label="Delete task"
                       >
                         <Trash2 className="size-3" />
                       </Button>

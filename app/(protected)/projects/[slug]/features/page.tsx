@@ -136,7 +136,8 @@ export default function FeaturesPage({
         `/api/projects/${slug}/features/${selectedFeatureId}`,
       );
       if (!res.ok) throw new Error('Failed to load feature');
-      return res.json();
+      const json = await res.json();
+      return json.data;
     },
     enabled: !!selectedFeatureId,
     staleTime: 1000 * 60 * 5,
@@ -343,6 +344,7 @@ export default function FeaturesPage({
         <SheetContent side="right" className="sm:max-w-lg overflow-y-auto">
           {detailLoading ? (
             <div className="space-y-4 pt-4">
+              <SheetTitle className="sr-only">Loading feature</SheetTitle>
               <Skeleton className="h-6 w-3/4 rounded-lg" />
               <div className="flex gap-2">
                 <Skeleton className="h-5 w-20 rounded-md" />
@@ -491,6 +493,7 @@ export default function FeaturesPage({
                         size="sm"
                         onClick={handleEdit}
                         className="h-7 px-2"
+                        aria-label="Edit feature"
                       >
                         <Pencil className="size-3" />
                       </Button>
@@ -499,6 +502,7 @@ export default function FeaturesPage({
                         size="sm"
                         className="h-7 px-2 text-destructive hover:text-destructive"
                         onClick={() => setDeleteTarget(detail)}
+                        aria-label="Delete feature"
                       >
                         <Trash2 className="size-3" />
                       </Button>
@@ -599,7 +603,9 @@ export default function FeaturesPage({
                 </SheetBody>
               </>
             )
-          ) : null}
+          ) : (
+            <SheetTitle className="sr-only">Feature</SheetTitle>
+          )}
         </SheetContent>
       </Sheet>
 

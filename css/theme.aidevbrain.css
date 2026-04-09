@@ -47,6 +47,12 @@
   --adb-shadow-lg: 0 4px 16px oklch(0% 0 0 / 0.4), 0 2px 4px oklch(0% 0 0 / 0.2);
 }
 
+/* ── Focus Indicators (WCAG AA) ── */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
 /* ── Dot Grid — barely visible texture ── */
 .adb-dotgrid {
   background-image: radial-gradient(circle, oklch(50% 0 0 / 0.04) 1px, transparent 1px);

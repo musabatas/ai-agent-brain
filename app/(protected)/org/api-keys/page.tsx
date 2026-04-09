@@ -142,6 +142,7 @@ export default function OrgApiKeysPage() {
                 No API keys yet. Create one to get started.
               </div>
             ) : (
+              <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -182,6 +183,7 @@ export default function OrgApiKeysPage() {
                         <Button
                           variant="ghost"
                           mode="icon"
+                          aria-label="Revoke API key"
                           className="size-8 text-muted-foreground hover:text-destructive"
                           onClick={() => setRevokeTarget(apiKey)}
                           disabled={!apiKey.isActive}
@@ -193,6 +195,7 @@ export default function OrgApiKeysPage() {
                   ))}
                 </TableBody>
               </Table>
+              </div>
             )}
           </CardContent>
         </Card>

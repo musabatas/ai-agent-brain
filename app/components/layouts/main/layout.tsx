@@ -48,12 +48,19 @@ export function MainLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-background focus:text-foreground focus:border focus:rounded-md"
+      >
+        Skip to main content
+      </a>
+
       {!isMobile && <Sidebar />}
 
       <div className="wrapper flex grow flex-col">
         <Header />
 
-        <main className="grow pt-5" role="content">
+        <main id="main-content" className="grow pt-5" role="main">
           {children}
         </main>
 

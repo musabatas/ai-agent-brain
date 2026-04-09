@@ -446,6 +446,7 @@ export default function DocumentsPage({
                             size="sm"
                             onClick={handleEdit}
                             className="h-7 px-2"
+                            aria-label="Edit document"
                           >
                             <Pencil className="size-3" />
                           </Button>
@@ -454,6 +455,7 @@ export default function DocumentsPage({
                             size="sm"
                             className="h-7 px-2 text-destructive hover:text-destructive"
                             onClick={() => setDeleteTarget(selectedDoc)}
+                            aria-label="Delete document"
                           >
                             <Trash2 className="size-3" />
                           </Button>

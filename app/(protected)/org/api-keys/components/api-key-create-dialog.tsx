@@ -111,6 +111,7 @@ export function ApiKeyCreateDialog({
                   type="button"
                   variant="outline"
                   mode="icon"
+                  aria-label={copied ? 'Copied' : 'Copy API key'}
                   onClick={handleCopy}
                 >
                   {copied ? <Check className="size-4" /> : <Copy className="size-4" />}

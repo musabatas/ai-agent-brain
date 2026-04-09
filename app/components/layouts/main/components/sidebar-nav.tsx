@@ -30,7 +30,7 @@ interface NavSection {
 const sections: NavSection[] = [
   {
     items: [
-      { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
+      { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
       {
         title: 'Projects',
         icon: FolderKanban,
