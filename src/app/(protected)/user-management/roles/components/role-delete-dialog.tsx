@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { LoaderCircleIcon } from 'lucide-react';
-import { UserRole } from '@/app/models/user';
+import { UserRole } from '@/models/user';
 
 const RoleDeleteDialog = ({
   open,

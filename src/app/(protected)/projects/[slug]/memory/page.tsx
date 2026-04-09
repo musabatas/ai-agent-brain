@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -45,7 +45,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MemoryFormDialog } from './memory-form-dialog';
+import { MemoryFormDialog } from '@/features/projects/components/memory-form-dialog';
 
 const typeConfig: Record<
   string,
@@ -98,6 +98,8 @@ export default function MemoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -257,7 +259,7 @@ export default function MemoryPage({
           </p>
         </div>
       ) : (
-        <div className="space-y-8 adb-fade-in">
+        <div className="space-y-8">
           {Object.entries(grouped).map(([type, entries]) => {
             const tc = typeConfig[type] ?? {
               icon: <Brain className="size-3.5" />,
@@ -271,7 +273,7 @@ export default function MemoryPage({
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     {tc.label}
                   </span>
-                  <span className="text-xs adb-mono text-muted-foreground/50">
+                  <span className="text-xs font-mono text-muted-foreground/50">
                     {entries.length}
                   </span>
                 </div>
@@ -291,10 +293,10 @@ export default function MemoryPage({
                       }}
                     >
                       <div className="flex items-center justify-between mb-1.5">
-                        <code className="text-sm adb-mono font-medium text-primary">
+                        <code className="text-sm font-mono font-medium text-primary">
                           {mem.key}
                         </code>
-                        <span className="text-[11px] adb-mono text-muted-foreground/50">
+                        <span className="text-xs font-mono text-muted-foreground/50">
                           {new Date(mem.updatedAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -309,7 +311,7 @@ export default function MemoryPage({
                           {mem.tags.map((tag) => (
                             <span
                               key={tag}
-                              className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
+                              className="text-xs px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
                             >
                               {tag}
                             </span>
@@ -341,6 +343,7 @@ export default function MemoryPage({
           if (!open) {
             setSelectedMem(null);
             setEditMode(false);
+            if (searchParams.get('open')) router.replace(pathname, { scroll: false });
           }
         }}
       >
@@ -512,7 +515,7 @@ export default function MemoryPage({
                       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                         Expires
                       </p>
-                      <p className="text-sm adb-mono text-muted-foreground/80">
+                      <p className="text-sm font-mono text-muted-foreground/80">
                         {new Date(selectedMem.expiresAt).toLocaleDateString(
                           'en-US',
                           {
@@ -529,7 +532,7 @@ export default function MemoryPage({
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                       Last Updated
                     </p>
-                    <p className="text-sm adb-mono text-muted-foreground/80">
+                    <p className="text-sm font-mono text-muted-foreground/80">
                       {new Date(selectedMem.updatedAt).toLocaleDateString(
                         'en-US',
                         {

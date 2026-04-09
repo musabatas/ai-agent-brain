@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef } from 'react';
 
@@ -105,14 +104,11 @@ export function useRecaptchaV2(siteKey: string) {
   };
 
   useEffect(() => {
-    let isMounted = true;
-
     if (containerRef.current) {
       initializeRecaptcha();
     }
 
     return () => {
-      isMounted = false;
       if (widgetId.current !== null) {
         const grecaptcha = (window as any).grecaptcha as ReCaptchaInstance;
         if (grecaptcha) {

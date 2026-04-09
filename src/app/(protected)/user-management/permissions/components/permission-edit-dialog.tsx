@@ -28,7 +28,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { LoaderCircleIcon } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
-import { UserPermission } from '@/app/models/user';
+import { UserPermission } from '@/models/user';
 import {
   PermissionSchema,
   PermissionSchemaType,

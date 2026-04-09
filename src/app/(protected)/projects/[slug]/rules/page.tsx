@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -44,7 +44,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RuleFormDialog } from './rule-form-dialog';
+import { RuleFormDialog } from '@/features/projects/components/rule-form-dialog';
 
 const enforcementConfig: Record<
   string,
@@ -111,6 +111,8 @@ export default function RulesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [scopeFilter, setScopeFilter] = useState('all');
@@ -274,7 +276,7 @@ export default function RulesPage({
           </p>
         </div>
       ) : (
-        <div className="space-y-8 adb-fade-in">
+        <div className="space-y-8">
           {Object.entries(grouped).map(([scope, scopeRules]) => {
             const sc = scopeConfig[scope] ?? {
               dot: 'bg-zinc-400',
@@ -287,7 +289,7 @@ export default function RulesPage({
                   <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     {sc.label}
                   </span>
-                  <span className="text-xs adb-mono text-muted-foreground/50">
+                  <span className="text-xs font-mono text-muted-foreground/50">
                     {scopeRules.length}
                   </span>
                 </div>
@@ -300,7 +302,7 @@ export default function RulesPage({
                     return (
                       <div
                         key={rule.id}
-                        className={`adb-project-card rounded-xl p-4 space-y-2 cursor-pointer ${!rule.isActive ? 'opacity-40' : ''}`}
+                        className={`bg-card border hover:bg-accent/50 transition-colors rounded-xl p-4 space-y-2 cursor-pointer ${!rule.isActive ? 'opacity-40' : ''}`}
                         style={{
                           animationDelay: `${i * 60}ms`,
                           animation: 'fadeSlideIn 0.4s ease-out both',
@@ -316,7 +318,7 @@ export default function RulesPage({
                           </h4>
                           <Badge
                             variant="outline"
-                            className={`text-[10px] shrink-0 ${enf.color}`}
+                            className={`text-xs shrink-0 ${enf.color}`}
                           >
                             {enf.icon}
                             <span className="ml-1">{enf.label}</span>
@@ -332,7 +334,7 @@ export default function RulesPage({
                             {rule.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
+                                className="text-xs px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
                               >
                                 {tag}
                               </span>
@@ -365,6 +367,7 @@ export default function RulesPage({
           if (!open) {
             setSelectedRule(null);
             setEditMode(false);
+            if (searchParams.get('open')) router.replace(pathname, { scroll: false });
           }
         }}
       >

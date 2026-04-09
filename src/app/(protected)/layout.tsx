@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ScreenLoader } from '@/components/common/screen-loader';
-import { MainLayout } from '../components/layouts/main/layout';
+import { MainLayout } from '@/components/layouts/main/layout';
 
 export default function ProtectedLayout({
   children,

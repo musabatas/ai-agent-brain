@@ -35,7 +35,7 @@ import {
   ToolbarHeading,
   ToolbarTitle,
 } from '@/components/common/toolbar';
-import { ApiKeyCreateDialog } from './components/api-key-create-dialog';
+import { ApiKeyCreateDialog } from '@/features/org/components/api-key-create-dialog';
 
 interface ApiKey {
   id: string;

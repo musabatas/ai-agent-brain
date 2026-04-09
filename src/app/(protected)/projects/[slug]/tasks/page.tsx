@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -53,7 +53,7 @@ import {
   SheetBody,
   SheetFooter,
 } from '@/components/ui/sheet';
-import { TaskFormDialog } from './task-form-dialog';
+import { TaskFormDialog } from '@/features/projects/components/task-form-dialog';
 
 const statusConfig: Record<
   string,
@@ -137,6 +137,8 @@ export default function TasksPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -278,7 +280,7 @@ export default function TasksPage({
   };
 
   return (
-    <div className="space-y-4 adb-fade-in">
+    <div className="space-y-4">
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 max-w-[280px]">
@@ -314,7 +316,7 @@ export default function TasksPage({
             <SelectItem value="P3">P3</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-xs adb-mono text-muted-foreground/60">
+        <span className="text-xs font-mono text-muted-foreground/60">
           {total} tasks
         </span>
         <Button
@@ -359,7 +361,7 @@ export default function TasksPage({
                     {task.title}
                   </p>
                   {task.feature && (
-                    <p className="text-[11px] text-muted-foreground/50 truncate">
+                    <p className="text-xs text-muted-foreground/50 truncate">
                       {task.feature.title}
                     </p>
                   )}
@@ -368,14 +370,14 @@ export default function TasksPage({
                   {task.tags.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/60"
+                      className="text-xs px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/60"
                     >
                       {tag}
                     </span>
                   ))}
                   <Badge
                     variant="outline"
-                    className={`text-[10px] px-1.5 py-0 ${priorityStyles[task.priority]}`}
+                    className={`text-xs px-1.5 py-0 ${priorityStyles[task.priority]}`}
                   >
                     {task.priority}
                   </Badge>
@@ -401,6 +403,7 @@ export default function TasksPage({
           if (!open) {
             setSelectedTask(null);
             setEditMode(false);
+            if (searchParams.get('open')) router.replace(pathname, { scroll: false });
           }
         }}
       >
@@ -495,7 +498,7 @@ export default function TasksPage({
                       placeholder="0"
                       className="w-24"
                     />
-                    <p className="text-[11px] text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground/60">
                       Lower = executed first
                     </p>
                   </div>
@@ -663,7 +666,7 @@ export default function TasksPage({
 
                   {selectedTask.description && (
                     <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1">
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1">
                         Description
                       </p>
                       <MarkdownPreview
@@ -677,7 +680,7 @@ export default function TasksPage({
                   {taskDetail?.dependsOnTasks &&
                     taskDetail.dependsOnTasks.length > 0 && (
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1.5 flex items-center gap-1">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1.5 flex items-center gap-1">
                           <GitBranch className="size-3" />
                           Blocked By
                         </p>
@@ -703,7 +706,7 @@ export default function TasksPage({
                               </span>
                               <Badge
                                 variant="outline"
-                                className={`text-[9px] px-1 py-0 ${priorityStyles[dep.priority] ?? ''}`}
+                                className={`text-xs px-1 py-0 ${priorityStyles[dep.priority] ?? ''}`}
                               >
                                 {dep.priority}
                               </Badge>
@@ -716,7 +719,7 @@ export default function TasksPage({
                   {/* Blocks (reverse deps) */}
                   {taskDetail?.blocks && taskDetail.blocks.length > 0 && (
                     <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1.5 flex items-center gap-1">
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1.5 flex items-center gap-1">
                         <ArrowRight className="size-3" />
                         Blocks
                       </p>
@@ -738,7 +741,7 @@ export default function TasksPage({
                             </span>
                             <Badge
                               variant="outline"
-                              className={`text-[9px] px-1 py-0 ${priorityStyles[dep.priority] ?? ''}`}
+                              className={`text-xs px-1 py-0 ${priorityStyles[dep.priority] ?? ''}`}
                             >
                               {dep.priority}
                             </Badge>
@@ -750,7 +753,7 @@ export default function TasksPage({
 
                   {selectedTask.tags.length > 0 && (
                     <div>
-                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1.5">
+                      <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1.5">
                         Tags
                       </p>
                       <div className="flex flex-wrap gap-1.5">
@@ -758,7 +761,7 @@ export default function TasksPage({
                           <Badge
                             key={tag}
                             variant="secondary"
-                            className="text-[11px]"
+                            className="text-xs"
                           >
                             {tag}
                           </Badge>
@@ -813,7 +816,7 @@ export default function TasksPage({
                       <ChevronLeft className="size-3 mr-1" />
                       Prev
                     </Button>
-                    <span className="text-[10px] adb-mono text-muted-foreground/40 self-center">
+                    <span className="text-xs font-mono text-muted-foreground/40 self-center">
                       {currentIdx + 1}/{tasks.length}
                     </span>
                     <Button

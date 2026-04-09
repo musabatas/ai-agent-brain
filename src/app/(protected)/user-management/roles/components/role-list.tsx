@@ -41,7 +41,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserRole } from '@/app/models/user';
+import { UserRole } from '@/models/user';
 import RoleDefaultDialog from './role-default-dialog';
 import RoleDeleteDialog from './role-delete-dialog';
 import RoleEditDialog from './role-edit-dialog';

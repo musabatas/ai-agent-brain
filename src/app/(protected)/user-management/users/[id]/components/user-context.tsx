@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, ReactNode, useContext } from 'react';
-import { User } from '@/app/models/user';
+import { User } from '@/models/user';
 
 interface UserContextProps {
   user: User;

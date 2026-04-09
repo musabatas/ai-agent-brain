@@ -51,7 +51,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { UserPermission, UserRole } from '@/app/models/user';
+import { UserPermission, UserRole } from '@/models/user';
 import { useRoleSelectQuery } from '../../roles/hooks/use-role-select-query';
 import PermissionDeleteDialog from './permission-delete-dialog';
 import PermissionEditDialog from './permission-edit-dialog';

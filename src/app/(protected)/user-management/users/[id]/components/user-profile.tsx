@@ -6,7 +6,7 @@ import { Badge, BadgeDot, BadgeProps } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User, UserStatus } from '@/app/models/user';
+import { User, UserStatus } from '@/models/user';
 import { getUserStatusProps } from '../../constants/status';
 import UserProfileEditDialog from './user-profile-edit-dialog';
 

@@ -42,7 +42,7 @@ import {
   ToolbarHeading,
   ToolbarTitle,
 } from '@/components/common/toolbar';
-import { MemberInviteDialog } from './components/member-invite-dialog';
+import { MemberInviteDialog } from '@/features/org/components/member-invite-dialog';
 
 interface OrgMember {
   id: string;

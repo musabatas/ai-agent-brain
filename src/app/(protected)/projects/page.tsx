@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Brain, FolderOpen, Plus } from 'lucide-react';
+import { Brain, Plus } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,8 +13,8 @@ import {
   ToolbarHeading,
   ToolbarTitle,
 } from '@/components/common/toolbar';
-import ProjectCard, { ProjectWithCounts } from './components/project-card';
-import ProjectCreateDialog from './components/project-create-dialog';
+import ProjectCard, { ProjectWithCounts } from '@/features/projects/components/project-card';
+import ProjectCreateDialog from '@/features/projects/components/project-create-dialog';
 
 export default function Page() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -23,12 +23,10 @@ export default function Page() {
     queryKey: ['projects'],
     queryFn: async () => {
       const response = await apiFetch('/api/projects');
-
       if (!response.ok) {
         const { message } = await response.json();
         throw new Error(message);
       }
-
       return response.json();
     },
     staleTime: Infinity,
@@ -39,38 +37,6 @@ export default function Page() {
 
   const projects: ProjectWithCounts[] = data?.data || [];
 
-  const LoadingSkeleton = () => (
-    <div className="adb-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="adb-project-card rounded-xl p-5 space-y-3">
-          <Skeleton className="h-5 w-40" />
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-2/3" />
-          <Skeleton className="h-1 w-full rounded-full mt-4" />
-        </div>
-      ))}
-    </div>
-  );
-
-  const EmptyState = () => (
-    <div className="adb-fade-in relative rounded-xl border border-border adb-dotgrid p-16 text-center">
-      <div className="adb-glow inline-flex rounded-2xl bg-muted/50 p-5 mb-5">
-        <Brain className="size-10 text-muted-foreground adb-pulse" />
-      </div>
-      <h3 className="text-lg font-semibold text-foreground mb-2">
-        No projects yet
-      </h3>
-      <p className="text-sm text-muted-foreground mb-6 max-w-sm mx-auto">
-        Create your first project to start building your AI development
-        brain.
-      </p>
-      <Button onClick={() => setCreateDialogOpen(true)}>
-        <Plus className="size-4 mr-1.5" />
-        Create Project
-      </Button>
-    </div>
-  );
-
   return (
     <>
       <Container>
@@ -80,10 +46,12 @@ export default function Page() {
           </ToolbarHeading>
           <ToolbarActions>
             <Button
+              size="sm"
+              className="rounded-full"
               disabled={isLoading}
               onClick={() => setCreateDialogOpen(true)}
             >
-              <Plus />
+              <Plus className="size-3.5" />
               New Project
             </Button>
           </ToolbarActions>
@@ -92,11 +60,35 @@ export default function Page() {
 
       <Container>
         {isLoading ? (
-          <LoadingSkeleton />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-lg border bg-card p-5 space-y-3">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-2/3" />
+              </div>
+            ))}
+          </div>
         ) : projects.length === 0 ? (
-          <EmptyState />
+          <div className="rounded-lg border border-dashed p-16 text-center">
+            <Brain className="size-8 text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="text-sm font-medium text-foreground mb-1">
+              No projects yet
+            </h3>
+            <p className="text-xs text-muted-foreground mb-5 max-w-xs mx-auto">
+              Create your first project to start building your AI development brain.
+            </p>
+            <Button
+              size="sm"
+              className="rounded-full"
+              onClick={() => setCreateDialogOpen(true)}
+            >
+              <Plus className="size-3.5" />
+              Create Project
+            </Button>
+          </div>
         ) : (
-          <div className="adb-stagger grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}

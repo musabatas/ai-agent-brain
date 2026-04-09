@@ -1,11 +1,11 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, Layers, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Layers, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { z } from 'zod';
 import { apiFetch } from '@/lib/api';
 import { useEntityMutation } from '@/hooks/use-entity-mutation';
@@ -35,7 +35,7 @@ import {
   SheetFooter,
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-import { FeatureFormDialog } from './feature-form-dialog';
+import { FeatureFormDialog } from '@/features/projects/components/feature-form-dialog';
 
 const statusColumns = [
   { key: 'BACKLOG', label: 'Backlog', dotColor: 'bg-zinc-400' },
@@ -89,8 +89,9 @@ export default function FeaturesPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
   const [selectedFeatureId, setSelectedFeatureId] = useState<string | null>(
@@ -190,7 +191,7 @@ export default function FeaturesPage({
     return (
       <div className="space-y-4">
         <Skeleton className="h-9 w-72 rounded-lg" />
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 adb-stagger">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {statusColumns.map((col) => (
             <div key={col.key} className="space-y-3">
               <Skeleton className="h-9 w-full rounded-lg" />
@@ -232,7 +233,7 @@ export default function FeaturesPage({
       </div>
 
       {/* Kanban Board */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 adb-fade-in">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         {statusColumns.map((col) => {
           const colFeatures = features.filter((f) => f.status === col.key);
           return (
@@ -244,7 +245,7 @@ export default function FeaturesPage({
                     {col.label}
                   </span>
                 </div>
-                <span className="text-xs adb-mono text-muted-foreground/60">
+                <span className="text-xs font-mono text-muted-foreground/60">
                   {colFeatures.length}
                 </span>
               </div>
@@ -263,7 +264,7 @@ export default function FeaturesPage({
                   return (
                     <div
                       key={feature.id}
-                      className="adb-project-card rounded-xl p-3.5 cursor-pointer"
+                      className="bg-card border hover:bg-accent/50 transition-colors rounded-xl p-3.5 cursor-pointer"
                       onClick={() => {
                         setSelectedFeatureId(feature.id);
                         setEditMode(false);
@@ -275,7 +276,7 @@ export default function FeaturesPage({
                         </h4>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] px-1.5 py-0 shrink-0 ${priorityStyles[feature.priority]}`}
+                          className={`text-xs px-1.5 py-0 shrink-0 ${priorityStyles[feature.priority]}`}
                         >
                           {feature.priority}
                         </Badge>
@@ -290,13 +291,13 @@ export default function FeaturesPage({
                       {totalTasks > 0 && (
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between">
-                            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
                               <Layers className="size-3" />
-                              <span className="adb-mono">
+                              <span className="font-mono">
                                 {doneCount}/{totalTasks}
                               </span>
                             </span>
-                            <span className="text-[11px] adb-mono text-muted-foreground/60">
+                            <span className="text-xs font-mono text-muted-foreground/60">
                               {progress}%
                             </span>
                           </div>
@@ -308,7 +309,7 @@ export default function FeaturesPage({
                                 background:
                                   progress === 100
                                     ? 'var(--color-emerald-400)'
-                                    : 'var(--adb-accent)',
+                                    : 'var(--foreground)',
                               }}
                             />
                           </div>
@@ -338,6 +339,7 @@ export default function FeaturesPage({
           if (!open) {
             setSelectedFeatureId(null);
             setEditMode(false);
+            if (searchParams.get('open')) router.replace(pathname, { scroll: false });
           }
         }}
       >
@@ -396,7 +398,7 @@ export default function FeaturesPage({
                         />
                       )}
                     />
-                    <p className="text-[11px] text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground/60">
                       Implementation approach — architecture, steps, constraints
                     </p>
                   </div>
@@ -461,7 +463,7 @@ export default function FeaturesPage({
                       placeholder="0"
                       className="w-24"
                     />
-                    <p className="text-[11px] text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground/60">
                       Order within status column (lower = first)
                     </p>
                   </div>
@@ -511,11 +513,11 @@ export default function FeaturesPage({
                   <div className="flex items-center gap-2 pt-1">
                     <Badge
                       variant="outline"
-                      className={`text-[10px] ${priorityStyles[detail.priority]}`}
+                      className={`text-xs ${priorityStyles[detail.priority]}`}
                     >
                       {detail.priority}
                     </Badge>
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-xs">
                       <span
                         className={`size-1.5 rounded-full mr-1 ${statusDotColors[detail.status] ?? 'bg-zinc-400'}`}
                       />
@@ -557,7 +559,7 @@ export default function FeaturesPage({
                         <h5 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           Tasks
                         </h5>
-                        <span className="text-[11px] adb-mono text-muted-foreground/60">
+                        <span className="text-xs font-mono text-muted-foreground/60">
                           {detailDone}/{detailTotal} done
                         </span>
                       </div>
@@ -570,7 +572,7 @@ export default function FeaturesPage({
                             background:
                               detailDone === detailTotal
                                 ? 'var(--color-emerald-400)'
-                                : 'var(--adb-accent)',
+                                : 'var(--foreground)',
                           }}
                         />
                       </div>
@@ -591,7 +593,7 @@ export default function FeaturesPage({
                             </span>
                             <Badge
                               variant="outline"
-                              className={`text-[9px] px-1 py-0 shrink-0 ${priorityStyles[task.priority] ?? ''}`}
+                              className={`text-xs px-1 py-0 shrink-0 ${priorityStyles[task.priority] ?? ''}`}
                             >
                               {task.priority}
                             </Badge>

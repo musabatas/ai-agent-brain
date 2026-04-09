@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -45,7 +45,7 @@ import {
   SheetFooter,
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-import { DocumentFormDialog } from './document-form-dialog';
+import { DocumentFormDialog } from '@/features/projects/components/document-form-dialog';
 
 const typeConfig: Record<
   string,
@@ -112,6 +112,8 @@ export default function DocumentsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -269,13 +271,13 @@ export default function DocumentsPage({
           </p>
         </div>
       ) : (
-        <div className="space-y-2.5 adb-fade-in">
+        <div className="space-y-2.5">
           {documents.map((doc, i) => {
             const tc = typeConfig[doc.type] ?? typeConfig.NOTE;
             return (
               <div
                 key={doc.id}
-                className="adb-project-card rounded-xl p-4 space-y-2.5 cursor-pointer"
+                className="bg-card border hover:bg-accent/50 transition-colors rounded-xl p-4 space-y-2.5 cursor-pointer"
                 style={{
                   animationDelay: `${i * 60}ms`,
                   animation: 'fadeSlideIn 0.4s ease-out both',
@@ -295,12 +297,12 @@ export default function DocumentsPage({
                   <div className="flex items-center gap-2 shrink-0">
                     <Badge
                       variant="outline"
-                      className={`text-[10px] ${tc.color}`}
+                      className={`text-xs ${tc.color}`}
                     >
                       {tc.icon}
                       <span className="ml-1">{tc.label}</span>
                     </Badge>
-                    <span className="text-[11px] adb-mono text-muted-foreground/50">
+                    <span className="text-xs font-mono text-muted-foreground/50">
                       {new Date(doc.updatedAt).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -318,7 +320,7 @@ export default function DocumentsPage({
                     {doc.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
+                        className="text-xs px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
                       >
                         {tag}
                       </span>
@@ -347,6 +349,7 @@ export default function DocumentsPage({
           if (!open) {
             setSelectedDoc(null);
             setEditMode(false);
+            if (searchParams.get('open')) router.replace(pathname, { scroll: false });
           }
         }}
       >
@@ -464,12 +467,12 @@ export default function DocumentsPage({
                       <div className="flex items-center gap-2 pt-1">
                         <Badge
                           variant="outline"
-                          className={`text-[10px] ${tc.color}`}
+                          className={`text-xs ${tc.color}`}
                         >
                           {tc.icon}
                           <span className="ml-1">{tc.label}</span>
                         </Badge>
-                        <span className="text-[11px] adb-mono text-muted-foreground/50">
+                        <span className="text-xs font-mono text-muted-foreground/50">
                           Updated{' '}
                           {new Date(selectedDoc.updatedAt).toLocaleDateString(
                             'en-US',
@@ -498,7 +501,7 @@ export default function DocumentsPage({
                             {selectedDoc.tags.map((tag) => (
                               <span
                                 key={tag}
-                                className="text-[11px] px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground/60"
+                                className="text-xs px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground/60"
                               >
                                 {tag}
                               </span>

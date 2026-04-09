@@ -1,4 +1,4 @@
-import { UserStatus } from '@/app/models/user';
+import { UserStatus } from '@/models/user';
 
 // Default status mapping
 export const UserStatusProps = {

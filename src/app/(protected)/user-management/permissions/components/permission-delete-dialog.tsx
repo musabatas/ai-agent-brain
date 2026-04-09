@@ -15,7 +15,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { LoaderCircleIcon } from 'lucide-react';
-import { UserPermission } from '@/app/models/user';
+import { UserPermission } from '@/models/user';
 
 export interface PermissionDeleteDialogProps {
   open: boolean;

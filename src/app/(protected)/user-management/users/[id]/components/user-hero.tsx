@@ -13,7 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { User } from '@/app/models/user';
+import { User } from '@/models/user';
 
 interface UserProfileProps {
   user: User;

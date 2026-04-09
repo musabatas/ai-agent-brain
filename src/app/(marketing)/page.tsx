@@ -96,13 +96,13 @@ export default function HomePage() {
                 <div className="size-[10px] rounded-full bg-zinc-300 dark:bg-zinc-700" />
                 <div className="size-[10px] rounded-full bg-zinc-300 dark:bg-zinc-700" />
               </div>
-              <span className="ml-2 text-[11px] text-zinc-400 dark:text-zinc-600">
+              <span className="ml-2 text-xs text-zinc-400 dark:text-zinc-600">
                 Terminal — claude-code
               </span>
             </div>
 
             {/* Terminal body */}
-            <div className="bg-zinc-950 px-5 py-5 font-[family-name:var(--font-mono)] text-[13px] leading-7 text-zinc-400">
+            <div className="bg-zinc-950 px-5 py-5 font-[family-name:var(--font-mono)] text-sm leading-7 text-zinc-400">
               <div>
                 <span className="text-zinc-600">~</span>
                 <span className="text-zinc-600"> $ </span>
@@ -274,7 +274,7 @@ export default function HomePage() {
             {/* Right — config snippet */}
             <div className="overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-900/50">
               <div className="border-b border-zinc-800/60 px-4 py-2.5">
-                <span className="text-[11px] text-zinc-600">
+                <span className="text-xs text-zinc-600">
                   mcp.json
                 </span>
               </div>
@@ -345,7 +345,7 @@ export default function HomePage() {
                 <div className="relative mb-5 flex size-16 items-center justify-center rounded-2xl border border-border/50 bg-muted/30">
                   <Icon className="size-6 text-foreground/70" />
                 </div>
-                <span className="mb-3 font-[family-name:var(--font-mono)] text-[11px] font-bold tracking-widest text-muted-foreground/30">
+                <span className="mb-3 font-[family-name:var(--font-mono)] text-xs font-bold tracking-widest text-muted-foreground/30">
                   {num}
                 </span>
                 <h3 className="mb-2 text-[15px] font-semibold tracking-[-0.01em] text-foreground">
@@ -401,7 +401,7 @@ export default function HomePage() {
                 <h3 className="mb-1 text-sm font-semibold text-foreground">
                   {title}
                 </h3>
-                <p className="text-[13px] leading-relaxed text-muted-foreground/70">
+                <p className="text-sm leading-relaxed text-muted-foreground/70">
                   {desc}
                 </p>
               </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -12,7 +12,6 @@ import {
   Search,
   Calendar,
   Plus,
-  Minus,
   Pencil,
   Trash2,
   X,
@@ -47,7 +46,7 @@ import {
   SheetBody,
   SheetFooter,
 } from '@/components/ui/sheet';
-import { DecisionFormDialog } from './decision-form-dialog';
+import { DecisionFormDialog } from '@/features/projects/components/decision-form-dialog';
 
 const statusConfig: Record<
   string,
@@ -123,6 +122,8 @@ export default function DecisionsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
@@ -280,7 +281,7 @@ export default function DecisionsPage({
   };
 
   return (
-    <div className="adb-fade-in space-y-4">
+    <div className="space-y-4">
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1 max-w-[280px]">
@@ -304,7 +305,7 @@ export default function DecisionsPage({
             <SelectItem value="SUPERSEDED">Superseded</SelectItem>
           </SelectContent>
         </Select>
-        <span className="text-xs adb-mono text-muted-foreground/60">
+        <span className="text-xs font-mono text-muted-foreground/60">
           {total} decisions
         </span>
         <Button
@@ -355,13 +356,13 @@ export default function DecisionsPage({
                     />
                   </div>
 
-                  <div className="adb-project-card rounded-xl p-4 space-y-3 hover:bg-muted/30 transition-colors">
+                  <div className="bg-card border hover:bg-accent/50 transition-colors rounded-xl p-4 space-y-3 hover:bg-muted/30 transition-colors">
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <h3 className="text-sm font-semibold">
                           {decision.title}
                         </h3>
-                        <span className="text-[11px] adb-mono text-muted-foreground/50">
+                        <span className="text-xs font-mono text-muted-foreground/50">
                           {new Date(decision.createdAt).toLocaleDateString(
                             'en-US',
                             {
@@ -374,7 +375,7 @@ export default function DecisionsPage({
                       </div>
                       <Badge
                         variant="outline"
-                        className={`text-[10px] shrink-0 ${config.color} border-current/20 bg-current/5`}
+                        className={`text-xs shrink-0 ${config.color} border-current/20 bg-current/5`}
                       >
                         {config.icon}
                         <span className="ml-1">{config.label}</span>
@@ -383,7 +384,7 @@ export default function DecisionsPage({
 
                     <div className="space-y-2.5 text-sm">
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-0.5">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-0.5">
                           Context
                         </p>
                         <p className="text-muted-foreground leading-relaxed line-clamp-2">
@@ -391,7 +392,7 @@ export default function DecisionsPage({
                         </p>
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-0.5">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-0.5">
                           Decision
                         </p>
                         <p className="text-foreground/90 leading-relaxed line-clamp-2">
@@ -405,7 +406,7 @@ export default function DecisionsPage({
                         {decision.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
+                            className="text-xs px-1.5 py-0.5 rounded-md bg-muted/50 text-muted-foreground/50"
                           >
                             {tag}
                           </span>
@@ -434,6 +435,7 @@ export default function DecisionsPage({
           if (!open) {
             setSelectedDecision(null);
             setEditMode(false);
+            if (searchParams.get('open')) router.replace(pathname, { scroll: false });
           }
         }}
       >
@@ -577,7 +579,7 @@ export default function DecisionsPage({
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="space-y-1">
-                            <span className="text-[10px] font-medium text-emerald-400">
+                            <span className="text-xs font-medium text-emerald-400">
                               Pros
                             </span>
                             <Input
@@ -589,7 +591,7 @@ export default function DecisionsPage({
                             />
                           </div>
                           <div className="space-y-1">
-                            <span className="text-[10px] font-medium text-red-400">
+                            <span className="text-xs font-medium text-red-400">
                               Cons
                             </span>
                             <Input
@@ -686,7 +688,7 @@ export default function DecisionsPage({
                       </div>
 
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1">
                           Context
                         </p>
                         <MarkdownPreview
@@ -696,7 +698,7 @@ export default function DecisionsPage({
                       </div>
 
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1">
+                        <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1">
                           Decision
                         </p>
                         <MarkdownPreview
@@ -707,7 +709,7 @@ export default function DecisionsPage({
 
                       {selectedDecision.consequences && (
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1">
                             Consequences
                           </p>
                           <MarkdownPreview
@@ -721,7 +723,7 @@ export default function DecisionsPage({
                         Array.isArray(selectedDecision.alternatives) &&
                         selectedDecision.alternatives.length > 0 && (
                           <div>
-                            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-2">
+                            <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-2">
                               Alternatives
                             </p>
                             <div className="space-y-3">
@@ -742,7 +744,7 @@ export default function DecisionsPage({
                                   )}
                                   {alt.pros && alt.pros.length > 0 && (
                                     <div>
-                                      <p className="text-[10px] font-medium text-emerald-400 mb-0.5">
+                                      <p className="text-xs font-medium text-emerald-400 mb-0.5">
                                         Pros
                                       </p>
                                       <ul className="space-y-0.5">
@@ -759,7 +761,7 @@ export default function DecisionsPage({
                                   )}
                                   {alt.cons && alt.cons.length > 0 && (
                                     <div>
-                                      <p className="text-[10px] font-medium text-red-400 mb-0.5">
+                                      <p className="text-xs font-medium text-red-400 mb-0.5">
                                         Cons
                                       </p>
                                       <ul className="space-y-0.5">
@@ -782,7 +784,7 @@ export default function DecisionsPage({
 
                       {selectedDecision.tags.length > 0 && (
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/40 mb-1.5">
+                          <p className="text-xs uppercase tracking-wider text-muted-foreground/40 mb-1.5">
                             Tags
                           </p>
                           <div className="flex flex-wrap gap-1.5">
@@ -790,7 +792,7 @@ export default function DecisionsPage({
                               <Badge
                                 key={tag}
                                 variant="secondary"
-                                className="text-[11px]"
+                                className="text-xs"
                               >
                                 {tag}
                               </Badge>
