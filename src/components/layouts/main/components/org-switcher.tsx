@@ -102,28 +102,25 @@ export function OrgSwitcher() {
       {/* Trigger — Active Org */}
       <button
         onClick={() => setOpen(!open)}
-        className="adb-org-trigger w-full flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl border border-border/60 bg-muted/30 transition-colors duration-150 hover:border-foreground/20 hover:bg-muted/50 group cursor-pointer"
+        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-sidebar-border bg-sidebar-foreground/[0.03] transition-colors duration-150 hover:bg-sidebar-foreground/[0.06] cursor-pointer"
       >
-        <div
-          className="size-8 rounded-xl flex items-center justify-center shrink-0"
-          style={{ background: 'oklch(50% 0 0 / 0.08)' }}
-        >
-          <span className="adb-mono text-[11px] font-bold text-foreground">
+        <div className="size-7 rounded-md bg-sidebar-foreground/10 flex items-center justify-center shrink-0">
+          <span className="font-mono text-xs font-bold text-sidebar-foreground/70">
             {getInitials(activeOrg?.name || 'O')}
           </span>
         </div>
 
         <div className="flex-1 min-w-0 text-left">
-          <p className="text-sm font-semibold text-foreground truncate leading-tight">
+          <p className="text-sm font-medium text-sidebar-foreground truncate leading-tight">
             {activeOrg?.name || 'Select org'}
           </p>
-          <p className="text-[10px] text-muted-foreground/60 leading-tight capitalize">
+          <p className="text-xs text-sidebar-foreground/40 leading-tight capitalize">
             {activeOrg?.memberRole?.toLowerCase() || 'member'}
           </p>
         </div>
 
         <ChevronDown
-          className={`size-3.5 text-muted-foreground/40 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`size-3 text-sidebar-foreground/30 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -160,7 +157,7 @@ export function OrgSwitcher() {
                     }`}
                   >
                     <span
-                      className={`adb-mono text-[10px] font-bold ${
+                      className={`font-mono text-xs font-bold ${
                         isActive
                           ? 'text-foreground'
                           : 'text-muted-foreground/70'
@@ -173,7 +170,7 @@ export function OrgSwitcher() {
                   <div className="flex-1 min-w-0 text-left">
                     <div className="flex items-center gap-1.5">
                       <span
-                        className={`text-[13px] font-medium truncate ${
+                        className={`text-sm font-medium truncate ${
                           isActive ? 'text-foreground' : 'text-foreground/80'
                         }`}
                       >
@@ -184,16 +181,16 @@ export function OrgSwitcher() {
                       )}
                     </div>
                     <div className="flex items-center gap-2.5 mt-0.5">
-                      <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground/50">
+                      <span className="flex items-center gap-0.5 text-xs text-muted-foreground/50">
                         <Users className="size-2.5" />
-                        <span className="adb-mono">{org.memberCount}</span>
+                        <span className="font-mono">{org.memberCount}</span>
                       </span>
-                      <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground/50">
+                      <span className="flex items-center gap-0.5 text-xs text-muted-foreground/50">
                         <FolderKanban className="size-2.5" />
-                        <span className="adb-mono">{org.projectCount}</span>
+                        <span className="font-mono">{org.projectCount}</span>
                       </span>
                       <span
-                        className={`text-[9px] px-1 py-px rounded font-medium ${rc}`}
+                        className={`text-xs px-1 py-px rounded font-medium ${rc}`}
                       >
                         {org.memberRole?.toLowerCase()}
                       </span>
@@ -217,7 +214,7 @@ export function OrgSwitcher() {
             <div className="size-7 rounded-md border border-dashed border-border/50 flex items-center justify-center shrink-0">
               <Plus className="size-3.5" />
             </div>
-            <span className="text-[13px] font-medium">New Organization</span>
+            <span className="text-sm font-medium">New Organization</span>
           </button>
         </div>
       </div>

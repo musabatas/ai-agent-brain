@@ -19,11 +19,12 @@ interface NavItem {
   icon: LucideIcon;
   path?: string;
   rootPath?: string;
-  children?: { title: string; path: string }[];
+  children?: { title: string; path: string; icon?: LucideIcon }[];
 }
 
 interface NavSection {
   label?: string;
+  id?: string;
   items: NavItem[];
 }
 
@@ -41,30 +42,18 @@ const sections: NavSection[] = [
   },
   {
     label: 'Organization',
+    id: 'org',
     items: [
-      {
-        title: 'Members',
-        icon: Users,
-        path: '/org/members',
-      },
-      {
-        title: 'API Keys',
-        icon: Key,
-        path: '/org/api-keys',
-      },
-      {
-        title: 'Settings',
-        icon: Settings,
-        path: '/org/settings',
-      },
+      { title: 'Members', icon: Users, path: '/org/members' },
+      { title: 'API Keys', icon: Key, path: '/org/api-keys' },
+      { title: 'Settings', icon: Settings, path: '/org/settings' },
     ],
   },
 ];
 
-export function SidebarNav() {
+export function SidebarNav({ isOpen }: { isOpen: boolean }) {
   const pathname = usePathname();
   const [expanded, setExpanded] = useState<string | null>(() => {
-    // Auto-expand section matching current path
     for (const section of sections) {
       for (const item of section.items) {
         if (item.children?.some((c) => pathname.startsWith(c.path))) {
@@ -87,62 +76,88 @@ export function SidebarNav() {
     pathname === path || pathname.startsWith(path + '/');
 
   return (
-    <nav className="flex-1 overflow-y-auto overflow-x-hidden py-4 px-3 space-y-5 scrollbar-none">
-      {sections.map((section, si) => (
-        <div key={si}>
-          {section.label && (
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/40 px-2 mb-2">
-              {section.label}
-            </p>
-          )}
+    <nav className={cn('flex-1 overflow-y-auto py-3 scrollbar-none', isOpen ? 'px-2' : 'px-2')}>
+      <div className="flex flex-col gap-0.5">
+        {sections.map((section, si) => (
+          <div key={si}>
+            {/* Section header */}
+            {section.label && isOpen && (
+              <div className="mt-5 mb-1.5 px-2.5">
+                <span className="text-xs font-semibold tracking-[0.12em] uppercase text-sidebar-muted">
+                  {section.label}
+                </span>
+              </div>
+            )}
 
-          <div className="space-y-0.5">
+            {/* Divider for collapsed sections */}
+            {section.label && !isOpen && (
+              <div className="mx-2 my-2 h-px bg-sidebar-border" />
+            )}
+
             {section.items.map((item) => {
               const active = isActive(item);
               const Icon = item.icon;
               const hasChildren = !!item.children;
-              const isOpen = expanded === item.title;
+              const isItemOpen = expanded === item.title;
 
+              /* Collapsed: icon only */
+              if (!isOpen) {
+                return (
+                  <Link
+                    key={item.path || item.title}
+                    href={item.path || '#'}
+                    className={cn(
+                      'flex items-center justify-center',
+                      'mx-auto size-9 rounded-md',
+                      'transition-colors duration-150 ease-out',
+                      active
+                        ? 'bg-sidebar-accent text-sidebar-foreground'
+                        : 'text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent',
+                    )}
+                  >
+                    <Icon className="size-4" />
+                  </Link>
+                );
+              }
+
+              /* Expanded: full items */
               if (hasChildren) {
                 return (
                   <div key={item.title}>
-                    {/* Parent toggle */}
                     <button
                       onClick={() =>
-                        setExpanded(isOpen ? null : item.title)
+                        setExpanded(isItemOpen ? null : item.title)
                       }
                       className={cn(
-                        'adb-sidebar-item w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-[13px] font-medium transition-colors duration-100 cursor-pointer',
+                        'group flex w-full items-center gap-2.5',
+                        'rounded-md px-2.5 py-1.5',
+                        'text-sm font-medium',
+                        'transition-colors duration-150 ease-out',
+                        'hover:bg-sidebar-accent',
                         active
-                          ? 'text-foreground bg-muted/60'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/30',
+                          ? 'bg-sidebar-accent text-sidebar-foreground'
+                          : 'text-sidebar-muted',
+                        'cursor-pointer',
                       )}
                     >
                       <Icon className="size-4 shrink-0" />
-                      <span
-                        className="flex-1 text-left"
-                        data-slot="accordion-menu-title"
-                      >
-                        {item.title}
-                      </span>
+                      <span className="flex-1 text-left truncate">{item.title}</span>
                       <ChevronRight
                         className={cn(
-                          'size-3.5 text-muted-foreground/40 transition-transform duration-150',
-                          isOpen && 'rotate-90',
+                          'size-3.5 text-sidebar-muted/50 transition-transform duration-200 ease-out',
+                          isItemOpen && 'rotate-90',
                         )}
-                        data-slot="accordion-menu-sub-indicator"
                       />
                     </button>
 
-                    {/* Children */}
                     <div
                       className="overflow-hidden transition-[max-height,opacity] duration-200 ease-out"
                       style={{
-                        maxHeight: isOpen ? '300px' : '0px',
-                        opacity: isOpen ? 1 : 0,
+                        maxHeight: isItemOpen ? '300px' : '0px',
+                        opacity: isItemOpen ? 1 : 0,
                       }}
                     >
-                      <div className="ml-4 mt-0.5 space-y-0.5 border-l border-border/30 pl-3">
+                      <div className="mt-0.5 ml-6 flex flex-col gap-0.5">
                         {item.children!.map((child) => {
                           const childActive = isChildActive(child.path);
                           return (
@@ -150,13 +165,14 @@ export function SidebarNav() {
                               key={child.path}
                               href={child.path}
                               className={cn(
-                                'block px-2.5 py-1.5 rounded-md text-[13px] transition-colors duration-100',
+                                'flex items-center gap-2.5 rounded-md px-2.5 py-1.5',
+                                'text-sm font-medium transition-colors duration-150 ease-out',
                                 childActive
-                                  ? 'text-foreground font-medium bg-muted/40'
-                                  : 'text-muted-foreground hover:text-foreground hover:bg-muted/20',
+                                  ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+                                  : 'text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent',
                               )}
                             >
-                              {child.title}
+                              <span className="truncate">{child.title}</span>
                             </Link>
                           );
                         })}
@@ -171,28 +187,23 @@ export function SidebarNav() {
                   key={item.path}
                   href={item.path!}
                   className={cn(
-                    'adb-sidebar-item flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-[13px] font-medium transition-colors duration-100',
+                    'group flex items-center gap-2.5',
+                    'rounded-md px-2.5 py-1.5',
+                    'text-sm font-medium',
+                    'transition-colors duration-150 ease-out',
                     active
-                      ? 'text-foreground bg-foreground/5'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/30',
+                      ? 'bg-sidebar-accent text-sidebar-foreground font-semibold'
+                      : 'text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent',
                   )}
                 >
-                  <Icon
-                    className={cn(
-                      'size-4 shrink-0',
-                      active && 'text-foreground',
-                    )}
-                  />
-                  <span data-slot="accordion-menu-title">{item.title}</span>
-                  {active && (
-                    <span className="ml-auto size-1.5 rounded-full bg-foreground" />
-                  )}
+                  <Icon className="size-4 shrink-0" />
+                  <span className="truncate">{item.title}</span>
                 </Link>
               );
             })}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </nav>
   );
 }

@@ -191,7 +191,7 @@ export function GlobalSearchDialog() {
       >
         <Search className="size-4" />
         <span className="text-sm hidden lg:inline">Search...</span>
-        <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 h-5 rounded bg-muted/50 border border-border/50 text-[10px] font-mono text-muted-foreground/50">
+        <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 h-5 rounded bg-muted/50 border border-border/50 text-xs font-mono text-muted-foreground/50">
           ⌘K
         </kbd>
       </Button>
@@ -268,10 +268,10 @@ export function GlobalSearchDialog() {
                       <div key={type} className="mb-2">
                         <div className="flex items-center gap-2 px-2 py-1.5">
                           <span className={config.color}>{config.icon}</span>
-                          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                             {config.label}s
                           </span>
-                          <span className="text-[10px] adb-mono text-muted-foreground/40">
+                          <span className="text-xs font-mono text-muted-foreground/40">
                             {items.length}
                           </span>
                         </div>
@@ -295,7 +295,7 @@ export function GlobalSearchDialog() {
                               {result.status && (
                                 <Badge
                                   variant="outline"
-                                  className="text-[9px] px-1.5 py-0"
+                                  className="text-xs px-1.5 py-0"
                                 >
                                   {result.status.replace('_', ' ')}
                                 </Badge>
@@ -303,7 +303,7 @@ export function GlobalSearchDialog() {
                               {result.priority && (
                                 <Badge
                                   variant="outline"
-                                  className="text-[9px] px-1.5 py-0"
+                                  className="text-xs px-1.5 py-0"
                                 >
                                   {result.priority}
                                 </Badge>

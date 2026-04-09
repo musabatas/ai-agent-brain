@@ -1,6 +1,7 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSettings } from '@/providers/settings-provider';
 import { Footer } from './components/footer';
@@ -9,45 +10,13 @@ import { Sidebar } from './components/sidebar';
 
 export function MainLayout({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
-  const { settings, setOption } = useSettings();
+  const { settings } = useSettings();
+  const sidebarOpen = !settings.layouts.main.sidebarCollapse;
 
-  useEffect(() => {
-    const bodyClass = document.body.classList;
-
-    if (settings.layouts.main.sidebarCollapse) {
-      bodyClass.add('sidebar-collapse');
-    } else {
-      bodyClass.remove('sidebar-collapse');
-    }
-  }, [settings]);
-
-  useEffect(() => {
-    setOption('layout', 'main');
-  }, [setOption]);
-
-  useEffect(() => {
-    const bodyClass = document.body.classList;
-
-    bodyClass.add('main-layout');
-    bodyClass.add('sidebar-fixed');
-    bodyClass.add('header-fixed');
-
-    const timer = setTimeout(() => {
-      bodyClass.add('layout-initialized');
-    }, 1000);
-
-    return () => {
-      bodyClass.remove('main-layout');
-      bodyClass.remove('sidebar-fixed');
-      bodyClass.remove('sidebar-collapse');
-      bodyClass.remove('header-fixed');
-      bodyClass.remove('layout-initialized');
-      clearTimeout(timer);
-    };
-  }, []);
+  const sidebarWidth = sidebarOpen ? 260 : 72;
 
   return (
-    <>
+    <div className="relative w-full min-h-screen">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-background focus:text-foreground focus:border focus:rounded-md"
@@ -57,16 +26,26 @@ export function MainLayout({ children }: { children: ReactNode }) {
 
       {!isMobile && <Sidebar />}
 
-      <div className="wrapper flex grow flex-col">
+      <div
+        className="transition-[padding-left] duration-200 ease-out"
+        style={{ paddingLeft: isMobile ? 0 : sidebarWidth }}
+      >
         <Header />
 
-        <main id="main-content" className="grow pt-5" role="main">
-          {children}
+        <main
+          id="main-content"
+          className={cn(
+            'bg-background px-4 py-4 lg:px-6 lg:py-5 min-h-[calc(100vh-48px)]',
+            isMobile && 'pb-24',
+          )}
+          role="main"
+        >
+          <div className="mx-auto w-full">{children}</div>
         </main>
 
         <Footer />
       </div>
-    </>
+    </div>
   );
 }
 

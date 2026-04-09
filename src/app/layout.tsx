@@ -1,6 +1,6 @@
 import { ReactNode, Suspense } from 'react';
-import { DM_Sans, JetBrains_Mono } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import localFont from 'next/font/local';
+import { JetBrains_Mono } from 'next/font/google';
 import { SettingsProvider } from '@/providers/settings-provider';
 import { TooltipsProvider } from '@/providers/tooltips-provider';
 import { Toaster } from '@/components/ui/sonner';
@@ -11,13 +11,19 @@ import { ModulesProvider } from '@/providers/modules-provider';
 import { QueryProvider } from '@/providers/query-provider';
 import { ThemeProvider } from '@/providers/theme-provider';
 
-const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-sans' });
+import './globals.css';
+
+const satoshi = localFont({
+  src: '../../public/fonts/Satoshi-Variable.woff2',
+  variable: '--font-satoshi',
+  weight: '300 900',
+  display: 'swap',
+});
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
 });
-
-import '@/css/styles.css';
 
 export const metadata: Metadata = {
   title: {
@@ -34,12 +40,7 @@ export default async function RootLayout({
   return (
     <html className="h-full scroll-smooth" suppressHydrationWarning>
       <body
-        className={cn(
-          'antialiased flex flex-col h-full text-base text-foreground bg-background',
-          dmSans.className,
-          dmSans.variable,
-          jetbrainsMono.variable,
-        )}
+        className={`flex flex-col h-full text-[14px] leading-relaxed ${satoshi.className} ${satoshi.variable} ${jetbrainsMono.variable}`}
       >
         <QueryProvider>
           <AuthProvider>

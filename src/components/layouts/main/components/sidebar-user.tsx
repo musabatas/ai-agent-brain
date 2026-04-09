@@ -19,36 +19,34 @@ export function SidebarUser() {
     .toUpperCase();
 
   return (
-    <div className="px-4 py-3 space-y-2">
-      {/* User info */}
+    <div className="px-3 py-3 space-y-2">
       <div className="flex items-center gap-2.5">
-        <div className="size-8 rounded-full bg-muted/80 flex items-center justify-center shrink-0">
-          <span className="adb-mono text-[11px] font-bold text-muted-foreground">
+        <div className="size-7 rounded-md bg-sidebar-foreground/10 flex items-center justify-center shrink-0">
+          <span className="font-mono text-xs font-bold text-sidebar-foreground/70">
             {initials}
           </span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-foreground truncate leading-tight">
+          <p className="text-sm font-medium text-sidebar-foreground truncate leading-tight">
             {user.name || 'User'}
           </p>
-          <p className="text-[11px] text-muted-foreground/50 truncate leading-tight">
+          <p className="text-xs text-sidebar-foreground/40 truncate leading-tight">
             {user.email}
           </p>
         </div>
       </div>
 
-      {/* Quick actions */}
       <div className="flex items-center gap-1">
         <Link
           href="/user-management/account"
-          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-[11px] text-muted-foreground/60 hover:text-foreground hover:bg-muted/30 transition-colors"
+          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-foreground/5 transition-colors"
         >
           <Settings className="size-3" />
-          <span data-slot="accordion-menu-title">Account</span>
+          <span>Account</span>
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: '/signin' })}
-          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-[11px] text-muted-foreground/60 hover:text-red-400 hover:bg-red-500/5 transition-colors cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs text-sidebar-foreground/50 hover:text-red-500 hover:bg-red-500/5 transition-colors cursor-pointer"
         >
           <LogOut className="size-3" />
           <span>Sign Out</span>

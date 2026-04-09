@@ -1,48 +1,94 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useSettings } from '@/providers/settings-provider';
+import { Pin, PinOff } from 'lucide-react';
 import { SidebarHeader } from './sidebar-header';
 import { SidebarNav } from './sidebar-nav';
 import { SidebarUser } from './sidebar-user';
 import { OrgSwitcher } from './org-switcher';
 
 export function Sidebar() {
-  const { settings } = useSettings();
-  const pathname = usePathname();
+  const { settings, storeOption } = useSettings();
+  const isPinned = !settings.layouts.main.sidebarCollapse;
+  const isOpen = isPinned; // When pinned, always open. When unpinned, controlled by hover.
+
+  const handleMouseEnter = () => {
+    if (!isPinned) {
+      storeOption('layouts.main.sidebarCollapse', false);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isPinned) {
+      storeOption('layouts.main.sidebarCollapse', true);
+    }
+  };
+
+  const togglePin = () => {
+    storeOption('layouts.main.sidebarCollapse', !settings.layouts.main.sidebarCollapse);
+  };
 
   return (
-    <div
+    <aside
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={cn(
-        'sidebar bg-background/80 backdrop-blur-xl lg:border-e lg:border-border/40 lg:fixed lg:top-0 lg:bottom-0 lg:z-20 lg:flex flex-col items-stretch shrink-0',
-        (settings.layouts.main.sidebarTheme === 'dark' ||
-          pathname.includes('dark-sidebar')) &&
-          'dark',
+        'hidden lg:flex fixed left-0 top-0 bottom-0 z-40',
+        'flex-col overflow-hidden',
+        'transition-all duration-200 ease-out',
+        isOpen ? 'w-[260px]' : 'w-[72px]',
+        'bg-sidebar backdrop-blur-xl',
       )}
     >
-      <SidebarHeader />
+      {/* Logo */}
+      <SidebarHeader isOpen={isOpen} />
 
-      <div className="overflow-hidden flex flex-col flex-1">
-        <div className="w-(--sidebar-default-width) flex flex-col flex-1 min-h-0">
-          {/* Org Switcher */}
-          <div className="px-4 pb-2">
-            <OrgSwitcher />
-          </div>
+      {/* Org Switcher */}
+      {isOpen && (
+        <div className="px-2 pb-2 border-b border-sidebar-border">
+          <OrgSwitcher />
+        </div>
+      )}
 
-          {/* Separator */}
-          <div className="h-px bg-border/30 mx-4" />
+      {/* Navigation */}
+      <SidebarNav isOpen={isOpen} />
 
-          {/* Navigation */}
-          <SidebarNav />
+      {/* Bottom: User + Pin Toggle */}
+      <div className="mt-auto">
+        {isOpen && <SidebarUser />}
 
-          {/* Bottom spacer + user */}
-          <div className="mt-auto">
-            <div className="h-px bg-border/30 mx-4" />
-            <SidebarUser />
-          </div>
+        {/* Pin toggle */}
+        <div className={cn(
+          'flex items-center gap-2 px-3 py-2',
+          'border-t border-sidebar-border',
+        )}>
+          {isOpen && (
+            <span className="text-sidebar-muted flex-1 text-xs font-medium">
+              {isPinned ? 'Pinned' : 'Auto-hide'}
+            </span>
+          )}
+          <button
+            onClick={togglePin}
+            className={cn(
+              'flex items-center justify-center',
+              'size-7 rounded-md',
+              'transition-colors duration-200 ease-out',
+              'hover:bg-sidebar-accent',
+              isPinned
+                ? 'bg-sidebar-accent text-sidebar-foreground'
+                : 'text-sidebar-muted hover:text-sidebar-foreground',
+              !isOpen && 'mx-auto',
+            )}
+          >
+            {isPinned ? (
+              <Pin className="size-3.5" />
+            ) : (
+              <PinOff className="size-3.5" />
+            )}
+          </button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }
