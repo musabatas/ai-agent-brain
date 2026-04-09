@@ -30,87 +30,139 @@ Never run, stop, start service unless user specifically requested. User already 
 ### Stack
 
 - **Next.js 16** (App Router, RSC) + **React 19** + **TypeScript**
-- **Tailwind CSS 4** (CSS-first, no tailwind.config) + **Apple Monochrome** design system (`css/theme.aidevbrain.css`)
+- **Tailwind CSS 4** (CSS-first) + **Graphite macOS** design system (`src/app/globals.css`)
 - **Prisma 7** ORM → **PostgreSQL** (Supabase, `PrismaPg` driver adapter)
 - **NextAuth v4** (credentials + Google OAuth, JWT strategy)
-- **ReUI** component library (shadcn/ui-style, configured in `components.json`)
+- **shadcn/ui** components (`src/components/ui/`, configured in `components.json`)
 - **TanStack Query** (`useInfiniteQuery` for lists, `staleTime: Infinity, gcTime: 1h`)
 - **react-hook-form** + **Zod** for forms
-- **DM Sans** (body) + **JetBrains Mono** (monospace/data)
+- **Satoshi** (body, via next/font/local) + **JetBrains Mono** (monospace/data)
 - **Package manager: pnpm**
+
+### File Architecture — `src/` with Feature-Based Organization
+
+```
+src/
+  app/                              # Next.js routes only
+    globals.css                     # Single CSS file — Graphite macOS tokens
+    layout.tsx                      # Root layout (fonts, providers)
+    (auth)/                         # Public auth pages
+    (marketing)/                    # Landing page
+    (protected)/                    # Auth-gated pages
+      dashboard/
+      onboarding/
+      projects/                     # Project list + [slug]/ detail pages
+        [slug]/                     # Nested sidebar layout for project entities
+          features/, tasks/, decisions/, rules/, documents/, memory/, mcp-config/
+      org/                          # Organization settings, members, api-keys
+      user-management/              # Admin CRUD (users, roles, permissions)
+    api/                            # API routes (auth, orgs, projects, user-management, mcp, health)
+
+  features/                         # Domain-specific business logic
+    projects/
+      services/                     # project, feature, task, decision, rule, document, memory, context, comment, revision
+      schemas/                      # Zod validation schemas
+      components/                   # project-card, project-context, analytics-charts, form dialogs
+    org/
+      services/                     # org, api-key
+      schemas/
+      components/                   # api-key-create-dialog, member-invite-dialog
+    mcp/
+      server.ts                     # MCP server factory
+      tools/                        # 10 tool files (one per entity group)
+    notifications/services/
+    webhooks/services/
+    audit/services/
+
+  components/
+    ui/                             # shadcn/ui primitives (managed by CLI)
+    common/                         # Shared: container, toolbar, content-loader, markdown-editor, delete-confirm-dialog, user-dropdown-menu, etc.
+    layouts/main/                   # Shell: sidebar, header, footer, org-switcher, global-search, breadcrumb
+
+  lib/                              # Shared server utilities
+    auth.ts                         # Dual auth (session + API key) → AuthContext
+    admin-guard.ts                  # requireAdmin() for user-management routes
+    prisma.ts                       # Prisma client (PrismaPg adapter)
+    api.ts, api-error.ts, api-response.ts  # API utilities
+    rate-limit.ts                   # In-memory rate limiting
+    mcp-config.ts                   # DRY MCP config generator (used by onboarding + MCP config page)
+    services/_helpers.ts            # resolveProject, slugify, logActivity, paginatedQuery
+
+  hooks/                            # use-active-org, use-infinite-entity-query, use-intersection-observer, use-debounced-value, etc.
+  providers/                        # Auth, Settings, Theme, i18n, Query, Modules, Tooltips
+  config/                           # constants.ts, menu.config.tsx, settings.config.ts
+  models/                           # TypeScript interfaces (project, user, org, system)
+  types/                            # Type declarations (.d.ts)
+  i18n/                             # Internationalization
+```
+
+### Path Alias
+
+`@/*` resolves to `./src/*` (single mapping in `tsconfig.json`).
 
 ### Route Groups
 
-- `app/(auth)/` — Public auth pages (signin, signup, verify-email, reset-password, change-password, resend-verification)
-- `app/(protected)/` — Authenticated pages. Redirects to `/signin` if unauthenticated. Uses `Demo1Layout` with sidebar.
-- `app/api/` — API routes:
-  - `auth/` — NextAuth + signup, verify-email, resend-verification
-  - `orgs/` — Organization + member + API key CRUD
-  - `projects/` — Domain entities: features, tasks, decisions, rules, docs, memory, context, activity
-  - `user-management/` — Admin-only: users, roles, permissions (protected by `requireAdmin()`)
-  - `mcp/` — MCP Streamable HTTP endpoint
-  - `health/` — Health check
+- `src/app/(auth)/` — Public auth pages (signin, signup, verify-email, reset-password, change-password)
+- `src/app/(protected)/` — Authenticated pages. Redirects to `/signin` if unauthenticated.
+- `src/app/api/` — API routes
 
-### Key Directories
+### Design System (Graphite macOS)
 
-- `app/models/` — TypeScript interfaces mirroring Prisma schema
-- `config/` — App settings, menu config (sidebar nav defined inline in `sidebar-nav.tsx`)
-- `providers/` — React context providers: Auth, Settings, Theme, i18n, Query, Modules, Tooltips
-- `lib/auth.ts` — Dual auth with `AuthContext { userId, orgId, orgRole, authType, apiKeyId? }`
-- `lib/admin-guard.ts` — `requireAdmin()` for user-management routes (checks `admin`/`owner` role slugs)
-- `lib/services/` — Domain service layer with `PaginatedResult<T>` responses
-- `lib/services/_helpers.ts` — `resolveProject`, `slugify`, `logActivity`, `toJsonInput`, `paginatedQuery`
-- `lib/mcp/` — MCP server factory + 8 tool files (one per entity group)
-- `hooks/` — `use-active-org`, `use-infinite-entity-query`, `use-intersection-observer`, `use-debounced-value`
-- `components/ui/` — ReUI/shadcn components (Button, Input, Select, Sheet, Dialog, Badge, etc.)
-- `css/theme.aidevbrain.css` — Apple Monochrome design tokens + `adb-*` utility classes
+Single CSS file: `src/app/globals.css`. No custom CSS classes — pure Tailwind + shadcn/ui.
 
-### Design System (Apple Monochrome)
+- **Surface hierarchy**: `bg-surface-1` (body/shell) → `bg-background` (content area) → `bg-card` (elevated)
+- **Primary**: Monochrome graphite — `#1a1a1a` (light) / `#ececec` (dark)
+- **Borders**: `rgba(0,0,0,0.10)` (light) / `rgba(255,255,255,0.07)` (dark) — transparent, not opaque
+- **Sidebar**: Translucent `backdrop-blur-xl`, pin/unpin toggle, auto-expand on hover when unpinned
+- **Dark mode**: Near-black `#0a0a0a` background, `#111111` cards
+- **Scrollbars**: macOS overlay style with transparent track
+- **Typography**: 14px body base, 12px (`text-xs`) minimum readable size — no text below 12px
+- **Muted foreground**: `#52525b` (light) / `#8c8c8c` (dark) — WCAG AA compliant contrast
 
-- **Primary color**: `--primary` overridden to `zinc-900` (light) / `zinc-100` (dark) — monochrome, not blue
-- **Cards**: Soft shadows (`adb-stat-card`, `adb-project-card`), no colored borders
-- **Sidebar/Header**: `backdrop-blur-xl` translucency
-- **Animations**: `adb-fade-in`, `adb-stagger` (cascading children)
-- **Typography**: `adb-mono` for data values (JetBrains Mono)
-- **Tabs**: `adb-tab` with foreground-colored underline
-- **Button/Input sizing**: Apple-scale (h-10 default, h-11 large, rounded-lg)
+### Project Detail Layout
+
+Project pages use a **nested sidebar** layout (not tabs):
+- Left: 220px sidebar with project name, status, entity navigation (Overview, Features, Tasks, etc.)
+- Right: Content area for the active entity page
+- Mobile: Horizontal scrollable nav below header
 
 ## Database
 
 Prisma 7 schema at `prisma/schema.prisma`. Connection split:
 - **CLI** (`prisma.config.ts`) — `DIRECT_URL` (port 5432, direct) for migrations
-- **Runtime** (`lib/prisma.ts`) — `PrismaPg` adapter with `DATABASE_URL` (port 6543, PgBouncer)
+- **Runtime** (`src/lib/prisma.ts`) — `PrismaPg` adapter with `DATABASE_URL` (port 6543, PgBouncer)
 
-Core models: `User`, `UserRole`, `UserPermission`, `UserRolePermission`, `Account`, `Session`, `VerificationToken`, `SystemLog`, `SystemSetting`, `Organization`, `OrgMember`, `ApiKey`, `Project`, `Feature`, `Task`, `Decision`, `Rule`, `Document`, `Memory`, `Activity`.
+Core models: `User`, `UserRole`, `UserPermission`, `UserRolePermission`, `Account`, `Session`, `VerificationToken`, `SystemLog`, `SystemSetting`, `Organization`, `OrgMember`, `ApiKey`, `Project`, `Feature`, `Task`, `Decision`, `Rule`, `Document`, `Memory`, `Activity`, `Comment`, `Revision`, `Notification`, `AuditLog`, `Webhook`.
 
 ## Authentication & Authorization
 
-### Dual Authentication (`lib/auth.ts`)
+### Dual Authentication (`src/lib/auth.ts`)
 
 - **Session** (NextAuth cookie) — for web UI. Org resolved from `X-Org-Id` header or auto-detected.
 - **API Key** (`Authorization: Bearer adb_sk_...`) — for MCP/programmatic access. Org resolved from key.
 
 Both return `AuthContext { userId, orgId, orgRole: 'OWNER' | 'ADMIN' | 'MEMBER', authType, apiKeyId? }`.
 
+### `useActiveOrgId()` hook
+
+Returns active org ID. Priority: `settings.activeOrgId` > `session.defaultOrgId` > `adb-org-id` cookie fallback.
+
 ### Security Rules
 
 - **API keys inherit the creator's CURRENT role** — demotion/removal takes effect immediately
 - **Removed members' API keys stop working** — `resolveApiKey()` verifies org membership on every request
-- **User Management routes** (`/api/user-management/users,roles,permissions`) — protected by `requireAdmin()` from `lib/admin-guard.ts`. Only `admin`/`owner` role slugs pass. Returns 403 for others.
+- **User Management routes** (`/api/user-management/users,roles,permissions`) — protected by `requireAdmin()` from `src/lib/admin-guard.ts`
 - **Org routes** — `getAuthContext()` verifies org membership before serving data
 - **New users get `member` role** (`isDefault: true`) — NOT admin
-- **User Management removed from sidebar** — not visible to regular users
 - **Protected records**: Some `User` and `UserRole` rows have `isProtected: true` — do not delete/modify
-
-### `isOrgAdmin(auth)` helper
-
-Returns `true` for OWNER/ADMIN roles. Use in routes that need org-level admin checks.
 
 ## MCP Server
 
 Endpoint at `/api/mcp` using `WebStandardStreamableHTTPServerTransport` (stateless mode).
 
-### Configuration (`.mcp.json`)
+### Configuration
+
+Generated by `src/lib/mcp-config.ts` (DRY — used by onboarding page and MCP config tab).
 
 ```json
 {
@@ -129,16 +181,15 @@ Endpoint at `/api/mcp` using `WebStandardStreamableHTTPServerTransport` (statele
 
 ### Tools
 
-40 tools across 8 groups: `project.*`, `feature.*`, `task.*`, `decision.*`, `rule.*`, `document.*`, `memory.*`, `context.*` (onboard, summary, focus).
+40+ tools across 10 groups: `project.*`, `feature.*`, `task.*`, `decision.*`, `rule.*`, `document.*`, `memory.*`, `context.*`, `comment.*`, `import.*`.
 
-- `X-Project-Slug` header sets default project — tools use it as fallback when `project` param is omitted
-- `project` param on any tool overrides the header
+- `X-Project-Slug` header sets default project — agents should NOT pass `project` param unless targeting a different project
 - All `list` tools support `limit`/`offset` pagination
 - Service responses: `{ data: T[], pagination: { total, limit, offset, hasMore } }`
 
 ### Context Tools
 
-- `context.onboard` — Full project dump for new AI sessions (features, tasks, decisions, rules, memory, activity)
+- `context.onboard` — Full project dump for new AI sessions
 - `context.summary` — Quick counts + recent activity
 - `context.focus` — In-progress features and tasks only
 
@@ -147,9 +198,8 @@ Endpoint at `/api/mcp` using `WebStandardStreamableHTTPServerTransport` (statele
 ### Backend
 
 All service `list()` methods accept `search?: string`, `limit?: number`, `offset?: number` and return `PaginatedResult<T>`.
-- `paginatedQuery()` helper in `_helpers.ts` runs `findMany` + `count` in parallel
+- `paginatedQuery()` helper in `src/lib/services/_helpers.ts` runs `findMany` + `count` in parallel
 - Search uses Prisma `contains` with `mode: 'insensitive'` (ILIKE)
-- API routes parse `?search=&limit=&offset=` query params
 
 ### Frontend
 
@@ -161,7 +211,7 @@ All service `list()` methods accept `search?: string`, `limit?: number`, `offset
 
 ## Email
 
-SMTP via nodemailer (`services/send-email.ts`). Port-aware TLS: `secure: port === 465`. Templates branded "AI Dev Brain".
+SMTP via nodemailer (`src/lib/services/send-email.ts`). Port-aware TLS: `secure: port === 465`. Templates branded "AI Dev Brain".
 
 ## Environment
 
