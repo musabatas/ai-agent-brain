@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
 import { created, unauthorized, badRequest } from '@/lib/api-response';
-import { CreateDecisionSchema } from '@/lib/schemas/decision.schema';
-import { decisionService } from '@/lib/services/decision.service';
+import { CreateDecisionSchema } from '@/features/projects/schemas/decision.schema';
+import { decisionService } from '@/features/projects/services/decision.service';
 
 export async function GET(
   req: NextRequest,

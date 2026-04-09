@@ -90,7 +90,7 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
   if (!hasData) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 adb-stagger">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Task Velocity Chart */}
       {weeklyCompletions.length > 0 && (
         <div className="rounded-xl border border-border p-5">
@@ -99,17 +99,17 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
           </h4>
           <ResponsiveContainer width="100%" height={160}>
             <BarChart data={weeklyCompletions} margin={{ top: 0, right: 0, bottom: 0, left: -20 }}>
-              <XAxis dataKey="week" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-              <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" allowDecimals={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+              <YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" allowDecimals={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--background))',
-                  border: '1px solid hsl(var(--border))',
+                  backgroundColor: 'var(--background)',
+                  border: '1px solid var(--border)',
                   borderRadius: '8px',
                   fontSize: '12px',
                 }}
               />
-              <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="count" fill="var(--primary)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -131,8 +131,8 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--background))',
-                    border: '1px solid hsl(var(--border))',
+                    backgroundColor: 'var(--background)',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '12px',
                   }}
@@ -144,7 +144,7 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
                 <div key={d.name} className="flex items-center gap-2 text-xs">
                   <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: d.fill }} />
                   <span className="text-muted-foreground">{d.name}</span>
-                  <span className="adb-mono text-foreground font-medium">{d.value}</span>
+                  <span className="font-mono text-foreground font-medium">{d.value}</span>
                 </div>
               ))}
             </div>
@@ -164,11 +164,11 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
               const pct = total > 0 ? (d.value / total) * 100 : 0;
               return (
                 <div key={d.name} className="flex items-center gap-3">
-                  <span className="text-xs font-medium w-6 adb-mono" style={{ color: d.fill }}>{d.name}</span>
+                  <span className="text-xs font-medium w-6 font-mono" style={{ color: d.fill }}>{d.name}</span>
                   <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
                     <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: d.fill }} />
                   </div>
-                  <span className="text-xs adb-mono text-muted-foreground w-6 text-right">{d.value}</span>
+                  <span className="text-xs font-mono text-muted-foreground w-6 text-right">{d.value}</span>
                 </div>
               );
             })}
@@ -192,8 +192,8 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--background))',
-                    border: '1px solid hsl(var(--border))',
+                    backgroundColor: 'var(--background)',
+                    border: '1px solid var(--border)',
                     borderRadius: '8px',
                     fontSize: '12px',
                   }}
@@ -205,7 +205,7 @@ export function AnalyticsCharts({ slug }: { slug: string }) {
                 <div key={d.name} className="flex items-center gap-2 text-xs">
                   <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: d.fill }} />
                   <span className="text-muted-foreground">{d.name}</span>
-                  <span className="adb-mono text-foreground font-medium">{d.value}</span>
+                  <span className="font-mono text-foreground font-medium">{d.value}</span>
                 </div>
               ))}
             </div>

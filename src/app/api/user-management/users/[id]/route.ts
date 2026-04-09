@@ -4,16 +4,16 @@ import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
 import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 import {
   UserProfileSchema,
   UserProfileSchemaType,
 } from '@/app/(protected)/user-management/users/[id]/forms/user-profile-schema';
-import { UserStatus } from '@/app/models/user';
+import { UserStatus } from '@/models/user';
 
 // GET: Fetch a specific user by ID, including role
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

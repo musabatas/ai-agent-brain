@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { logActivity, paginatedQuery, resolveProject } from './_helpers';
+import { logActivity, paginatedQuery, resolveProject } from '@/lib/services/_helpers';
 
 export const commentService = {
   async create(

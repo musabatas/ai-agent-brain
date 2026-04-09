@@ -4,12 +4,12 @@ import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
 import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 import {
   UserAddSchema,
   UserAddSchemaType,
 } from '@/app/(protected)/user-management/users/forms/user-add-schema';
-import { UserStatus } from '@/app/models/user';
+import { UserStatus } from '@/models/user';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

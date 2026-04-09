@@ -193,7 +193,7 @@ export function TaskFormDialog({ open, onClose, slug }: TaskFormDialogProps) {
                 placeholder="0"
                 className="w-24"
               />
-              <p className="text-[11px] text-muted-foreground/60">
+              <p className="text-xs text-muted-foreground/60">
                 Lower number = executed first. Independent of priority.
               </p>
             </div>
@@ -232,7 +232,7 @@ export function TaskFormDialog({ open, onClose, slug }: TaskFormDialogProps) {
                 {...register('tags')}
                 placeholder="Comma-separated tags"
               />
-              <p className="text-[11px] text-muted-foreground/60">
+              <p className="text-xs text-muted-foreground/60">
                 e.g. frontend, bug, urgent
               </p>
             </div>

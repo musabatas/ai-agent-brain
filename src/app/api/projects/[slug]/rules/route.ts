@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
 import { created, unauthorized, badRequest } from '@/lib/api-response';
-import { CreateRuleSchema } from '@/lib/schemas/rule.schema';
-import { ruleService } from '@/lib/services/rule.service';
+import { CreateRuleSchema } from '@/features/projects/schemas/rule.schema';
+import { ruleService } from '@/features/projects/services/rule.service';
 
 export async function GET(
   req: NextRequest,

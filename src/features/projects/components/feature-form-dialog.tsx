@@ -123,7 +123,7 @@ export function FeatureFormDialog({
                   />
                 )}
               />
-              <p className="text-[11px] text-muted-foreground/60">
+              <p className="text-xs text-muted-foreground/60">
                 Implementation approach (optional — can be added later)
               </p>
             </div>
@@ -182,7 +182,7 @@ export function FeatureFormDialog({
                 placeholder="0"
                 className="w-24"
               />
-              <p className="text-[11px] text-muted-foreground/60">
+              <p className="text-xs text-muted-foreground/60">
                 Controls card order within each status column
               </p>
             </div>

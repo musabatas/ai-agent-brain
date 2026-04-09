@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { revisionService } from '@/lib/services/revision.service';
+import { revisionService } from '@/features/projects/services/revision.service';
 
 export async function GET(
   req: NextRequest,

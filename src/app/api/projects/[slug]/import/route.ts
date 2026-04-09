@@ -2,18 +2,18 @@ import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
 import { ok, created, unauthorized, notFound, badRequest } from '@/lib/api-response';
-import { featureService } from '@/lib/services/feature.service';
-import { taskService } from '@/lib/services/task.service';
-import { decisionService } from '@/lib/services/decision.service';
-import { ruleService } from '@/lib/services/rule.service';
-import { documentService } from '@/lib/services/document.service';
-import { memoryService } from '@/lib/services/memory.service';
-import { CreateFeatureSchema, UpdateFeatureSchema } from '@/lib/schemas/feature.schema';
-import { CreateTaskSchema, UpdateTaskSchema } from '@/lib/schemas/task.schema';
-import { CreateDecisionSchema, UpdateDecisionSchema } from '@/lib/schemas/decision.schema';
-import { CreateRuleSchema, UpdateRuleSchema } from '@/lib/schemas/rule.schema';
-import { CreateDocumentSchema, UpdateDocumentSchema } from '@/lib/schemas/document.schema';
-import { UpsertMemorySchema } from '@/lib/schemas/memory.schema';
+import { featureService } from '@/features/projects/services/feature.service';
+import { taskService } from '@/features/projects/services/task.service';
+import { decisionService } from '@/features/projects/services/decision.service';
+import { ruleService } from '@/features/projects/services/rule.service';
+import { documentService } from '@/features/projects/services/document.service';
+import { memoryService } from '@/features/projects/services/memory.service';
+import { CreateFeatureSchema, UpdateFeatureSchema } from '@/features/projects/schemas/feature.schema';
+import { CreateTaskSchema, UpdateTaskSchema } from '@/features/projects/schemas/task.schema';
+import { CreateDecisionSchema, UpdateDecisionSchema } from '@/features/projects/schemas/decision.schema';
+import { CreateRuleSchema, UpdateRuleSchema } from '@/features/projects/schemas/rule.schema';
+import { CreateDocumentSchema, UpdateDocumentSchema } from '@/features/projects/schemas/document.schema';
+import { UpsertMemorySchema } from '@/features/projects/schemas/memory.schema';
 
 const ENTITY_CONFIG = {
   feature: {

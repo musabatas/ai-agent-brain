@@ -4,7 +4,7 @@ import { getClientIP } from '@/lib/api';
 import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
 import { deleteFromS3, uploadToS3 } from '@/lib/s3-upload';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 import { GeneralSettingsSchema } from '@/app/(protected)/user-management/settings/forms/general-settings-schema';
 import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 

@@ -1,6 +1,6 @@
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { logActivity, slugify, toJsonInput } from './_helpers';
+import { logActivity, slugify, toJsonInput } from '@/lib/services/_helpers';
 
 export const projectService = {
   async create(

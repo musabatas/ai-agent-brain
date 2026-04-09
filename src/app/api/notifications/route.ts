@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { notificationService } from '@/lib/services/notification.service';
+import { notificationService } from '@/features/notifications/services/notification.service';
 
 export async function GET(req: NextRequest) {
   try {

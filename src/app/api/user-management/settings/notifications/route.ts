@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { getClientIP } from '@/lib/api';
 import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 import { NotificationSettingsSchema } from '@/app/(protected)/user-management/settings/forms/notification-settings-schema';
 import authOptions from '@/app/api/auth/[...nextauth]/auth-options';
 

@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { UpdateTaskSchema } from '@/lib/schemas/task.schema';
-import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
+import { UpdateTaskSchema } from '@/features/projects/schemas/task.schema';
+import { logActivity, paginatedQuery, resolveProject, toJsonInput } from '@/lib/services/_helpers';
 
 export const taskService = {
   async create(

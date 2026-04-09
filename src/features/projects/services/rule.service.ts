@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { UpdateRuleSchema } from '@/lib/schemas/rule.schema';
-import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
+import { UpdateRuleSchema } from '@/features/projects/schemas/rule.schema';
+import { logActivity, paginatedQuery, resolveProject, toJsonInput } from '@/lib/services/_helpers';
 
 export const ruleService = {
   async create(

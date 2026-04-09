@@ -4,7 +4,7 @@ import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
 import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -19,7 +19,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ message: 'Invalid input.' }, { status: 400 });
     }
 
-    // Validation: Limit deletion to a maximum of 2 records to ensure a smooth demo experience for users.
+    // Validation: Limit batch deletion to a maximum of 2 records per request.
     if (permissionIds.length > 2) {
       return NextResponse.json(
         {

@@ -272,7 +272,7 @@ export function DecisionFormDialog({
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-medium text-emerald-400">
+                      <span className="text-xs font-medium text-emerald-400">
                         Pros
                       </span>
                       <Input
@@ -282,7 +282,7 @@ export function DecisionFormDialog({
                       />
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-medium text-red-400">
+                      <span className="text-xs font-medium text-red-400">
                         Cons
                       </span>
                       <Input

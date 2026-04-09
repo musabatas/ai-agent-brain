@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { SystemSetting } from '@/app/models/system';
+import { SystemSetting } from '@/models/system';
 
 /**
  * Checks if a record is unique in a Prisma table.

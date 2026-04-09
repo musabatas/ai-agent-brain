@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
 import { ok, unauthorized, notFound, badRequest } from '@/lib/api-response';
-import { UpsertMemorySchema } from '@/lib/schemas/memory.schema';
-import { memoryService } from '@/lib/services/memory.service';
+import { UpsertMemorySchema } from '@/features/projects/schemas/memory.schema';
+import { memoryService } from '@/features/projects/services/memory.service';
 
 export async function GET(
   req: NextRequest,

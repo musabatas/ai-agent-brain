@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
-import { sendEmail } from '@/services/send-email';
+import { sendEmail } from '@/lib/services/send-email';
 import {
   ChangePasswordApiSchemaType,
   getChangePasswordApiSchema,

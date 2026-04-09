@@ -1,7 +1,7 @@
 import {
   Bell,
   FolderKanban,
-  Key,
+
   LayoutDashboard,
   Settings,
   ShieldUser,

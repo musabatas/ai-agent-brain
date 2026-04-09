@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import { getAuthContext } from '@/lib/auth';
-import { createMcpServer } from '@/lib/mcp/server';
+import { createMcpServer } from '@/features/mcp/server';
 import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {

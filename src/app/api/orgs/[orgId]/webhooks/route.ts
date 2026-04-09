@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { orgService } from '@/lib/services/org.service';
-import { webhookService } from '@/lib/services/webhook.service';
+import { orgService } from '@/features/org/services/org.service';
+import { webhookService } from '@/features/webhooks/services/webhook.service';
 import { z } from 'zod';
 
 const CreateWebhookSchema = z.object({

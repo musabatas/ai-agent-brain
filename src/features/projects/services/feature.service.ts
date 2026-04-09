@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { UpdateFeatureSchema } from '@/lib/schemas/feature.schema';
-import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
+import { UpdateFeatureSchema } from '@/features/projects/schemas/feature.schema';
+import { logActivity, paginatedQuery, resolveProject, toJsonInput } from '@/lib/services/_helpers';
 
 export const featureService = {
   async create(

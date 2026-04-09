@@ -5,12 +5,12 @@ import bcrypt from 'bcrypt';
 import prisma from '@/lib/prisma';
 import { rateLimit } from '@/lib/rate-limit';
 import { verifyRecaptchaToken } from '@/lib/recaptcha';
-import { sendEmail } from '@/services/send-email';
+import { sendEmail } from '@/lib/services/send-email';
 import {
   getSignupSchema,
   SignupSchemaType,
 } from '@/app/(auth)/forms/signup-schema';
-import { User, UserStatus } from '@/app/models/user';
+import { User, UserStatus } from '@/models/user';
 
 // Helper function to generate a verification token and send the email.
 async function sendVerificationEmail(user: User) {

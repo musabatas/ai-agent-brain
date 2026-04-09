@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { UpdateDocumentSchema } from '@/lib/schemas/document.schema';
-import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
+import { UpdateDocumentSchema } from '@/features/projects/schemas/document.schema';
+import { logActivity, paginatedQuery, resolveProject, toJsonInput } from '@/lib/services/_helpers';
 
 export const documentService = {
   async create(

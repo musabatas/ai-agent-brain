@@ -5,16 +5,16 @@ import { requireAdmin } from '@/lib/admin-guard';
 import { handleApiError } from '@/lib/api-error';
 import { isUnique } from '@/lib/db';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 import {
   RoleSchema,
   RoleSchemaType,
 } from '@/app/(protected)/user-management/roles/forms/role-schema';
-import { UserRolePermission } from '@/app/models/user';
+import { UserRolePermission } from '@/models/user';
 
 // GET: Fetch a specific role by ID, including permissions
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

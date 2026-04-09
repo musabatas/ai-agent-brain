@@ -2,8 +2,8 @@ import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
 import { ok, unauthorized, notFound, badRequest } from '@/lib/api-response';
-import { UpdateFeatureSchema } from '@/lib/schemas/feature.schema';
-import { featureService } from '@/lib/services/feature.service';
+import { UpdateFeatureSchema } from '@/features/projects/schemas/feature.schema';
+import { featureService } from '@/features/projects/services/feature.service';
 
 export async function GET(
   req: NextRequest,

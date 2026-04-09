@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { UpdateOrgMemberSchema } from '@/lib/schemas/org.schema';
-import { orgService } from '@/lib/services/org.service';
+import { UpdateOrgMemberSchema } from '@/features/org/schemas/org.schema';
+import { orgService } from '@/features/org/services/org.service';
 
 export async function PATCH(
   req: NextRequest,

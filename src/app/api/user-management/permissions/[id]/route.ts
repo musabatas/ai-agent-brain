@@ -5,7 +5,7 @@ import { requireAdmin } from '@/lib/admin-guard';
 import { handleApiError } from '@/lib/api-error';
 import { isUnique } from '@/lib/db';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 import {
   PermissionSchema,
   PermissionSchemaType,
@@ -13,7 +13,7 @@ import {
 
 // GET: Fetch a specific permission by ID
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {

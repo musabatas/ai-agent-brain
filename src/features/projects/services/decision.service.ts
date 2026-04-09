@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { AuthContext } from '@/lib/auth';
-import { UpdateDecisionSchema } from '@/lib/schemas/decision.schema';
-import { logActivity, paginatedQuery, PaginatedResult, resolveProject, toJsonInput } from './_helpers';
+import { UpdateDecisionSchema } from '@/features/projects/schemas/decision.schema';
+import { logActivity, paginatedQuery, resolveProject, toJsonInput } from '@/lib/services/_helpers';
 
 export const decisionService = {
   async create(

@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { resolveProject } from './_helpers';
+import { resolveProject } from '@/lib/services/_helpers';
 
 export const contextService = {
   /**

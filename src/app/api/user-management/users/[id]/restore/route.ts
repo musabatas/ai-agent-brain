@@ -4,7 +4,7 @@ import { getClientIP } from '@/lib/api';
 import { requireAdmin } from '@/lib/admin-guard';
 import { handleApiError } from '@/lib/api-error';
 import { prisma } from '@/lib/prisma';
-import { systemLog } from '@/services/system-log';
+import { systemLog } from '@/lib/services/system-log';
 
 export async function PATCH(
   request: NextRequest,

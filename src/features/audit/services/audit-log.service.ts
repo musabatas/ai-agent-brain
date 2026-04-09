@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
-import { paginatedQuery } from './_helpers';
+import { paginatedQuery } from '@/lib/services/_helpers';
 
 export const auditLogService = {
   async log(data: {

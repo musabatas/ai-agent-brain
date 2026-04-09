@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { apiKeyService } from '@/lib/services/api-key.service';
-import { orgService } from '@/lib/services/org.service';
+import { apiKeyService } from '@/features/org/services/api-key.service';
+import { orgService } from '@/features/org/services/org.service';
 
 export async function DELETE(
   req: NextRequest,

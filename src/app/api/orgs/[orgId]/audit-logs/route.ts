@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { orgService } from '@/lib/services/org.service';
-import { auditLogService } from '@/lib/services/audit-log.service';
+import { orgService } from '@/features/org/services/org.service';
+import { auditLogService } from '@/features/audit/services/audit-log.service';
 
 export async function GET(
   req: NextRequest,

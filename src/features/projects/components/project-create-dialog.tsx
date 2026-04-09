@@ -11,7 +11,7 @@ import { apiFetch } from '@/lib/api';
 import {
   CreateProjectSchema,
   CreateProjectSchemaType,
-} from '@/lib/schemas/project.schema';
+} from '@/features/projects/schemas/project.schema';
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {

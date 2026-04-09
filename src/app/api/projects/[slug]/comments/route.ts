@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
-import { commentService } from '@/lib/services/comment.service';
+import { commentService } from '@/features/projects/services/comment.service';
 import { z } from 'zod';
 
 const CreateCommentSchema = z.object({

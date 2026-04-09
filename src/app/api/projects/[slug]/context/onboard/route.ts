@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { getAuthContext } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-error';
 import { ok, unauthorized, notFound } from '@/lib/api-response';
-import { contextService } from '@/lib/services/context.service';
+import { contextService } from '@/features/projects/services/context.service';
 
 export async function GET(
   req: NextRequest,

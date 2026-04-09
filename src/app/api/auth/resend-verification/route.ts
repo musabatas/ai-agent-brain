@@ -2,8 +2,8 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { rateLimit } from '@/lib/rate-limit';
-import { sendEmail } from '@/services/send-email';
-import { UserStatus } from '@/app/models/user';
+import { sendEmail } from '@/lib/services/send-email';
+import { UserStatus } from '@/models/user';
 
 export async function POST(req: NextRequest) {
   const limited = rateLimit(req, { key: 'resend-verify', limit: 5, windowMs: 15 * 60 * 1000 });

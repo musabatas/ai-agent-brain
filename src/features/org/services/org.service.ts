@@ -1,5 +1,5 @@
 import prisma from '@/lib/prisma';
-import { slugify } from './_helpers';
+import { slugify } from '@/lib/services/_helpers';
 
 export const orgService = {
   async create(userId: string, data: { name: string; slug?: string }) {
